@@ -1,0 +1,10 @@
+out
+node_modules
+.vscode-test/
+*.vsix
+vsc-extension-quickstart.md
+circuitpython
+# mypy
+.mypy_cache/
+circup
+.env/

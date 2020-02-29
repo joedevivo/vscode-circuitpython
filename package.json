@@ -1,0 +1,113 @@
+{
+	"name": "vscode-circuitpython",
+	"displayName": "CircuitPython",
+	"description": "CircuitPython for Visual Studio Code",
+	"version": "0.0.1",
+	"publisher": "joedevivo",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/joedevivo/vscode-circuitpython.git"
+	},
+	"bugs": {
+		"url": "https://github.com/joedevivo/vscode-circuitpython/issues"
+	},
+	"engines": {
+		"vscode": "^1.42.0"
+	},
+	"icon": "images/BlinkaOnDark.png",
+	"categories": [
+		"Programming Languages"
+	],
+	"keywords": [
+		"iot",
+		"adafruit",
+		"circuitpython",
+		"blinka"
+	],
+	"activationEvents": [
+    "workspaceContains:/code.py",
+		"onCommand:extension.helloWorld",
+		"onCommand:circuitpython.openSerialMonitor",
+		"onCommand:circuitpython.selectSerialPort",
+		"onCommand:circuitpython.sendMessageToSerialPort",
+		"onCommand:circuitpython.closeSerialMonitor"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "circuitpython.selectSerialPort",
+				"title": "CircuitPython: Select Serial Port"
+			},
+			{
+				"command": "circuitpython.openSerialMonitor",
+				"title": "CircuitPython: Open Serial Monitor"
+			},
+			{
+				"command": "circuitpython.closeSerialMonitor",
+				"title": "CircuitPython: Close Serial Monitor"
+			},
+			{
+				"command": "circuitpython.sendMessageToSerialPort",
+				"title": "CircuitPython: Send Text to Serial Port"
+			},
+			{
+				"command": "circuitpython.selectBoard",
+				"title": "CircuitPython: Choose CircuitPython Board"
+			},
+			{
+				"command": "circuitpython.circup.list",
+				"title": "CircuitPython: List Installed Libraries"
+			},
+			{
+				"command": "circuitpython.circup.show",
+				"title": "CircuitPython: Show Available Libraries"
+			},
+			{
+				"command": "circuitpython.circup.update",
+				"title": "CircuitPython: Update All Libraries"
+			}
+		],
+		"configuration": {
+		},
+		"keybindings": [
+			{
+				"command": "circuitpython.openSerialMonitor",
+				"key": "ctrl+alt+r",
+				"mac": "cmd+alt+r"
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"lint": "eslint src --ext ts",
+		"watch": "tsc -watch -p ./",
+		"pretest": "npm run compile && npm run lint",
+		"test": "node ./out/test/runTest.js"
+	},
+	"extensionDependencies": [
+		"ms-python.python"
+	],
+	"devDependencies": {
+		"@types/glob": "^7.1.1",
+		"@types/mocha": "^7.0.1",
+		"@types/node": "^12.11.7",
+		"@types/vscode": "^1.42.0",
+		"@typescript-eslint/eslint-plugin": "^2.18.0",
+		"@typescript-eslint/parser": "^2.18.0",
+		"electron": "^6.1.8",
+		"electron-rebuild": "^1.10.0",
+		"eslint": "^6.8.0",
+		"glob": "^7.1.6",
+		"mocha": "^7.0.1",
+		"typescript": "^3.7.5",
+		"vscode-test": "^1.3.0"
+	},
+	"dependencies": {
+		"@types/serialport": "^8.0.0",
+		"npm": "^6.14.1",
+		"serialport": "^8.0.7",
+		"shelljs": "^0.8.3"
+	}
+}

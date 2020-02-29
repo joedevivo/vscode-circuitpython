@@ -1,0 +1,4 @@
+circup
+semver
+appdirs
+mypy
