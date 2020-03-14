@@ -314,8 +314,7 @@ export class LibraryManager implements vscode.Disposable {
   }
 
   public static getMpy(name: string): string {
-    if(path.extname(name) === ".py") {
-      // If I'm looking in -py, don't do this.
+    if(path.extname(name) === ".py" && LibraryManager._libraryManager.mpySuffix === "py") {
       name = path.basename(name, ".py") + ".mpy";
     }
     return path.join(
