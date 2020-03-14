@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { posix } from 'path';
+import * as path from 'path';
 import * as fs from 'fs';
 import { SerialMonitor } from "./serialmonitor/serialMonitor";
 import { Context } from "./context";
@@ -7,22 +7,46 @@ import { execSync } from "child_process";
 import * as $ from 'shelljs';
 import { Board } from "./boards/board";
 import { Circup } from './circup';
+import { LibraryManager } from './librarymanager/libraryManager';
 
-export function activate(context: vscode.ExtensionContext) {
-	let metadataFile: string = posix.join(
+import * as drivelist from 'drivelist';
+import { DeviceManager } from './devicemanager/deviceManager';
+
+export async function activate(context: vscode.ExtensionContext) {
+	// Update bundle and load metadata on activation
+	await LibraryManager.newInstance(context.globalStoragePath); //.then(() => null);
+	let lib: LibraryManager = LibraryManager.getInstance();
+	let libraryShowCmd = vscode.commands.registerCommand('circuitpython.library.show', () =>
+		lib.show()
+	);
+	context.subscriptions.push(libraryShowCmd);
+	let libraryListCmd = vscode.commands.registerCommand('circuitpython.library.list', () =>
+		lib.list()
+	);	
+	context.subscriptions.push(libraryListCmd);
+	let libraryUpdateCmd = vscode.commands.registerCommand('circuitpython.library.update', () =>
+		lib.update()
+	);
+	context.subscriptions.push(libraryUpdateCmd);
+	let libraryReloadProjectCmd = vscode.commands.registerCommand('circuitpython.library.reload', () =>
+		lib.reloadProjectLibraries()
+	);
+	context.subscriptions.push(libraryReloadProjectCmd);
+	vscode.workspace.onDidDeleteFiles((e: vscode.FileDeleteEvent) => lib.reloadProjectLibraries())
+
+	let dev: DeviceManager = await DeviceManager.getInstance();
+
+	let metadataFile: string = path.join(
 		context.extensionPath,
 		"boards",
 		"metadata.json"
 	);
 	Board.loadBoards(metadataFile);
-
-	let circup: Circup = Circup.getInstance();
-
 	const extContext = Context.getInstance();
 	extContext.extensionPath = context.extensionPath;
 	
 	// Path to Circuit Python Libraries
-	extContext.libraryPath = circup.getLibraryPath();
+	extContext.libraryPath = lib.completionPath();
 
 	// Disable jedi
 	vscode.workspace.getConfiguration().update("python.jediEnabled", false);
@@ -52,21 +76,6 @@ export function activate(context: vscode.ExtensionContext) {
 		extContext.selectBoard()
 	);
 	context.subscriptions.push(selectBoardCmd);
-
-	let circupListCmd = vscode.commands.registerCommand('circuitpython.circup.list', () =>
-		circup.list()
-	);
-	context.subscriptions.push(circupListCmd);
-
-	let circupShowCmd = vscode.commands.registerCommand('circuitpython.circup.show', () =>
-		circup.show()
-	);
-	context.subscriptions.push(circupShowCmd);
-
-	let circupUpdateCmd = vscode.commands.registerCommand('circuitpython.circup.update', () =>
-	  circup.update()
-	);
-	context.subscriptions.push(circupUpdateCmd);
 }
 
 // this method is called when your extension is deactivated
