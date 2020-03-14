@@ -32,7 +32,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		lib.reloadProjectLibraries()
 	);
 	context.subscriptions.push(libraryReloadProjectCmd);
-	vscode.workspace.onDidDeleteFiles((e: vscode.FileDeleteEvent) => lib.reloadProjectLibraries())
+	vscode.workspace.onDidDeleteFiles((e: vscode.FileDeleteEvent) => lib.reloadProjectLibraries());
 
 	let dev: DeviceManager = await DeviceManager.getInstance();
 

@@ -184,35 +184,48 @@ export class LibraryManager implements vscode.Disposable {
     return choices;
   }
 
+  private getProjectRoot(): string {
+    let root:string = null;
+    vscode.workspace.workspaceFolders.forEach((f) => {
+      let r: string = path.join(
+        f.uri.fsPath
+      );
+      if(!root && fs.existsSync(r)){
+        let b: string = path.join(
+          r, "boot_out.txt"
+        );
+        if(fs.existsSync(b)) {
+          root = r;
+        }
+      }
+    });
+    return root;
+  }
   private getProjectCPVer(): string {
     let bootOut: string = null;
     let ver: string = "unknown";
-    vscode.workspace.workspaceFolders.forEach((f) => {
-      let b: string = path.join(
-        f.uri.path,
-        "boot_out.txt"
-      );
-      console.log(b);
-      if (bootOut === null && fs.existsSync(b)) {
-        bootOut = b;
-        ver = fs.readFileSync(bootOut).toString().split(";")[0].split(" ")[2];
-      }
-    });
+    let b: string = path.join(
+      this.getProjectRoot(),
+      "boot_out.txt"
+    );
+    console.log(b);
+    if (bootOut === null && fs.existsSync(b)) {
+      bootOut = b;
+      ver = fs.readFileSync(bootOut).toString().split(";")[0].split(" ")[2];
+    }
     return ver;
   }
   private getProjectLibDir(): string {
     let libDir: string = null;
 
-    vscode.workspace.workspaceFolders.forEach((f) => {
-      let l: string = path.join(
-        f.uri.path,
-        "lib"
-      );
-      console.log(l);
-      if (libDir === null && fs.existsSync(l)) {
-        libDir = l;
-      }
-    });
+    let l: string = path.join(
+      this.getProjectRoot(),
+      "lib"
+    );
+    console.log(l);
+    if (libDir === null && fs.existsSync(l)) {
+      libDir = l;
+    }
     return libDir;
   }
 
@@ -302,6 +315,7 @@ export class LibraryManager implements vscode.Disposable {
 
   public static getMpy(name: string): string {
     if(path.extname(name) === ".py") {
+      // If I'm looking in -py, don't do this.
       name = path.basename(name, ".py") + ".mpy";
     }
     return path.join(
