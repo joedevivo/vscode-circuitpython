@@ -120,6 +120,10 @@ export class LibraryManager implements vscode.Disposable {
   }
 
   public completionPath(): string {
+    if(this.localBundleDir === null) {
+      // In case nothing exists yet.
+      return null;
+    }
     return path.join(
       this.localBundleDir,
       "lib"
@@ -212,12 +216,13 @@ export class LibraryManager implements vscode.Disposable {
     return libDir;
   }
 
+  // TODO BREAKS ON FIRST TIME!
   private setStorageRoot(root: string) {
     this.storageRoot = root;
     this.bundleDir = path.join(this.storageRoot, "bundle");
     fs.mkdirSync(this.bundleDir, {recursive: true});
     let tag: string = this.getMostRecentBundleOnDisk();
-    if(this.verifyBundle(tag)) {
+    if(tag !== undefined && this.verifyBundle(tag)) {
       this.tag = tag;
       this.localBundleDir = path.join(this.bundleDir, tag);
     }
@@ -234,8 +239,8 @@ export class LibraryManager implements vscode.Disposable {
       this.tag = tag;
       vscode.window.showInformationMessage(`Bundle updated to ${tag}`);
     }
-    Context.resetCompletionPath();
     this.verifyBundle(tag);
+    Context.resetCompletionPath();
   }
 
   private verifyBundle(tag: string): boolean {
