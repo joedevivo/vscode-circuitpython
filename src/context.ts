@@ -58,14 +58,23 @@ export class Context implements vscode.Disposable {
   }
 
   private updateBoardChoiceStatus(board: Board) {
+    let paths: string[] = new Array<string>();
     this._currentBoard = board;
+
+    if(board) {
+      paths.push(
+        path.join(this.extensionPath, "boards", board.vid, board.pid)
+      );
+    }
+    paths.push(path.join(this.extensionPath, "stubs"));
+    let libPath: string = LibraryManager.getInstance().completionPath();
+    if(libPath) {
+      paths.push(libPath);
+    }
+
     vscode.workspace.getConfiguration().update(
       "python.autoComplete.extraPaths", 
-      [
-        path.join(this.extensionPath, "boards", board.vid, board.pid),
-        path.join(this.extensionPath, "stubs"),
-        LibraryManager.getInstance().completionPath()
-      ]
+      paths
     );
 
     if (board) {

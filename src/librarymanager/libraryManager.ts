@@ -216,7 +216,6 @@ export class LibraryManager implements vscode.Disposable {
     return libDir;
   }
 
-  // TODO BREAKS ON FIRST TIME!
   private setStorageRoot(root: string) {
     this.storageRoot = root;
     this.bundleDir = path.join(this.storageRoot, "bundle");
