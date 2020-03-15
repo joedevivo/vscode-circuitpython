@@ -1,4 +1,7 @@
 import * as vscode from 'vscode';
+// Not used yet, but may do semver checks in the future. Right now logic assumes
+// that the most recently downloaded bundle will be newer than the one you've
+// got installed if they're different.
 import * as semver from 'semver';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -9,26 +12,35 @@ A Library can either represent an entry in the Adafruit_CircuitPython_Bundle or
 a library in the project.
 */
 export class Library implements vscode.QuickPickItem {
+  // QuickPickItem impl
   public label: string = null;
   public description: string = null;
 
   public name: string = null;
   public version: string = null;
   public repo: string = null;
-  public path: string = null;
+  // Is this a compiled mpy library
   public mpy: boolean = false;
-  public directory: boolean = false;
+  // Is this a directory? If false, it's a single file.
+  public isDirectory: boolean = false;
+  // Whatever it is, it's this.
+  public location: string = null;
 
-  public constructor(name: string, version: string, repo: string, file: string, directory: boolean) {
+  // Location may be a file or directory
+  public constructor(name: string, version: string, repo: string, location: string, isDirectory: boolean) {
     this.label = name;
     this.description = `Version: ${version}`;
     this.name = name;
     this.version = version;
     this.repo = repo;
-    this.path = file;
-    this.directory = directory;
+    this.location = location;
+    this.isDirectory = isDirectory;
   }
 
+  /*
+  Figures out what kind of files represent this library and routes to the
+  appropriate function
+   */
   public static async from(p: string): Promise<Library> {
     let ext: string = path.extname(p);
     if(ext === ".py") {
@@ -40,6 +52,9 @@ export class Library implements vscode.QuickPickItem {
     }
   }
 
+  /*
+  This handles the single source py file
+   */
   public static async fromFile(file: string): Promise<Library> {
     let s: fs.ReadStream = fs.createReadStream(file, {encoding: "utf8"});
 
@@ -67,6 +82,9 @@ export class Library implements vscode.QuickPickItem {
     });
   }
 
+  /*
+  This handles the single binary mpy file 
+  */
   public static async fromBinaryFile(file: string): Promise<Library> {
     let s: fs.ReadStream = fs.createReadStream(file);
     return new Promise<Library>((resolve, reject) => {
@@ -86,6 +104,11 @@ export class Library implements vscode.QuickPickItem {
     });
   }
 
+  /*
+  This handles a directory, which makes some decisions about what to look at,
+  then sends single files through the above functions and identifies the one
+  with the best metadata.
+  */
   public static async fromDirectory(dir: string): Promise<Library> {
     let name: string = path.basename(dir);
     let mpy: boolean = false;

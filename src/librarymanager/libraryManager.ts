@@ -11,6 +11,7 @@ import * as fs_extra from 'fs-extra';
 import { Context } from '../context';
 
 class LibraryQP implements vscode.QuickPickItem {
+  // QuickPickItem impl
   public label: string = null;
   public description: string = null;
 
@@ -51,17 +52,17 @@ class LibraryQP implements vscode.QuickPickItem {
     LibraryManager.getInstance().reloadProjectLibraries();
   }
   private install() {
-    let src: string = LibraryManager.getMpy(path.basename(this.bundleLib.path));
-    if(this.bundleLib.directory) {
+    let src: string = LibraryManager.getMpy(path.basename(this.bundleLib.location));
+    if(this.bundleLib.isDirectory) {
       fs_extra.copySync(
         src,
-        path.join(LibraryManager.getInstance().projectLibDir, path.basename(this.bundleLib.path)),
+        path.join(LibraryManager.getInstance().projectLibDir, path.basename(this.bundleLib.location)),
         { overwrite: true }
       );
     } else {
       fs.copyFileSync(
         src,
-        path.join(LibraryManager.getInstance().projectLibDir, path.basename(this.bundleLib.path, ".py") + ".mpy"),
+        path.join(LibraryManager.getInstance().projectLibDir, path.basename(this.bundleLib.location, ".py") + ".mpy"),
       );
     }
   }
@@ -76,23 +77,44 @@ export class LibraryManager implements vscode.Disposable {
     'py', '4.x-mpy', '5.x-mpy'
   ];
   public static BUNDLE_VERSION_REGEX: RegExp = /\d\d\d\d\d\d\d\d/; //new RegExp('[\\d', 'i')
-  public static DUNDER_ASSIGN_RE: RegExp = /^__\w+__\s*=\s*['"].+['"]$/;
-  private storageRoot: string = null;
+  //public static DUNDER_ASSIGN_RE: RegExp = /^__\w+__\s*=\s*['"].+['"]$/;
+
+  // storageRootDir is passed in from the extension context as
+  // `context.globalStoragePath` We'll keep up to date libraries here, and all
+  // instances of the extension can look here for them.
+  private storageRootDir: string = null;
+
+  // ${storageRootDir}/bundle
   private bundleDir: string = null;
+
+  // ${storageRootDir}/bundle/${tag}
   private localBundleDir: string = null;
+
+  // This is the current tag for the latest bundle ON DISK.
   public tag: string = null;
+
+  // Circuit Python version running on this project's device
   public cpVersion = null;
+
+  // mpySuffix defaults to "py", but we'll switch it on successful
+  // identification of cpVersion
   public mpySuffix: string = "py";
+
+  // full path to what's effectively $workspaceRoot/lib
   public projectLibDir: string = null;
+
+  // Metadata for Bundled libraries on disk
   private libraries: Map<string, Library> = new Map<string, Library>();
+
+  // Metadata for libraries in your project
   private workspaceLibraries: Map<string, Library> = new Map<string, Library>();
   
   public static getInstance(): LibraryManager {
     return LibraryManager._libraryManager;
   }
-  public static async newInstance(storagePath: string) {
+  public static async newInstance(storageDir: string) {
     let l: LibraryManager = new LibraryManager();
-    l.setStorageRoot(storagePath);
+    l.setStorageRoot(storageDir);
 
     LibraryManager._libraryManager = l;
     LibraryManager._libraryManager.initialize();
@@ -116,7 +138,6 @@ export class LibraryManager implements vscode.Disposable {
     if(LibraryManager.BUNDLE_SUFFIXES.includes(`${v[0]}.x-mpy`)) {
       this.mpySuffix = `${v[0]}.x-mpy`;
     }
-    console.log("It's loaded!");
   }
 
   public completionPath(): string {
@@ -201,6 +222,8 @@ export class LibraryManager implements vscode.Disposable {
     });
     return root;
   }
+  // Find it boot_out, so put boot_out.txt in your project root if you want this.
+  // TODO: Allow this to be set in workspace settings
   private getProjectCPVer(): string {
     let bootOut: string = null;
     let ver: string = "unknown";
@@ -230,8 +253,8 @@ export class LibraryManager implements vscode.Disposable {
   }
 
   private setStorageRoot(root: string) {
-    this.storageRoot = root;
-    this.bundleDir = path.join(this.storageRoot, "bundle");
+    this.storageRootDir = root;
+    this.bundleDir = path.join(this.storageRootDir, "bundle");
     fs.mkdirSync(this.bundleDir, {recursive: true});
     let tag: string = this.getMostRecentBundleOnDisk();
     if(tag !== undefined && this.verifyBundle(tag)) {
@@ -309,12 +332,12 @@ export class LibraryManager implements vscode.Disposable {
     LibraryManager.BUNDLE_SUFFIXES.forEach(async s => {
       let url: string = String.Format(urlRoot, tag, s);
       let r: axios.AxiosResponse = await axios.default.get(url, {responseType: 'stream'});
-      await r.data.pipe(unzip.Extract({ path: path.join(this.storageRoot, "bundle", this.tag) }));
+      await r.data.pipe(unzip.Extract({ path: path.join(this.storageRootDir, "bundle", this.tag) }));
     });
   }
 
   public static getMpy(name: string): string {
-    if(path.extname(name) === ".py" && LibraryManager._libraryManager.mpySuffix === "py") {
+    if(path.extname(name) === ".py" && LibraryManager._libraryManager.mpySuffix !== "py") {
       name = path.basename(name, ".py") + ".mpy";
     }
     return path.join(
@@ -336,13 +359,13 @@ export class LibraryManager implements vscode.Disposable {
   }
 
   private async loadLibraryMetadata(rootDir: string): Promise<Map<string, Library>> {
-    let paths: string[] = 
+    let libDirs: string[] = 
       await globby( '*',
                     {absolute: true, cwd: rootDir, deep: 1, onlyFiles: false}
       );
     
     let libraries: Array<Promise<Library>> =
-      paths.map((p, i, a) => Library.from(p));
+      libDirs.map((p, i, a) => Library.from(p));
 
     return new Promise<Map<string, Library>>(async (resolve, reject) => {
       let libs: Array<Library> = await Promise.all(libraries).catch((error) => {
