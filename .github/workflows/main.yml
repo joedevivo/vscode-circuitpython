@@ -23,7 +23,13 @@ jobs:
         node-version: 8.x
     - name: npm install
       run: npm install
+    - name: persist bindings
+      uses: actions/upload-artifact@v1
+      with:
+        name: node_modules
+        path: node_modules
   build:
+    needs: node_modules
     strategy:
       # run one at a time, so we can keep the bindings for each platform
       max-parallel: 1
