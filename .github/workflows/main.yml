@@ -11,6 +11,18 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  # Get modules, rebuild for each platform
+  node_modules:
+    runs-on: macos-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Install Node.js
+      uses:  actions/setup-node@v1
+      with:
+        node-version: 8.x
+    - name: npm install
+      run: npm install
   build:
     strategy:
       # run one at a time, so we can keep the bindings for each platform
@@ -49,12 +61,24 @@ jobs:
     needs: build
     runs-on: macos-latest
     steps:
+    - name: Checkout
+      uses: actions/checkout@v2
     - name: download previous bindings
       uses: actions/download-artifact@v1
       with:
         name: node_modules
         path: node_modules
     - name: show bindings
-      run: ls -al ./node_modules/@serialport/bindings/bin 
+      run: ls -al ./node_modules/@serialport/bindings/bin
+    - name: Install Node.js
+      uses:  actions/setup-node@v1
+      with:
+        node-version: 8.x
     - name: VSCE Package
       run: ./node_modules/.bin/vsce package
+    - name: Persist package
+      uses: actions/upload-artifact@v1
+      with:
+        name: extension
+        # figure out versioning here.
+        path: vscode-circuitpython-0.0.2.vsix
