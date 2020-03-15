@@ -6,5 +6,5 @@ vsc-extension-quickstart.md
 circuitpython
 # mypy
 .mypy_cache/
-circup
+circup*
 .env/

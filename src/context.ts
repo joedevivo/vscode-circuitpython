@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { Board } from './boards/board';
-import { posix } from 'path';
+import * as path from 'path';
+import { LibraryManager } from "./librarymanager/libraryManager";
 
 export class Context implements vscode.Disposable {
   public extensionPath: string = null;
@@ -30,6 +31,12 @@ export class Context implements vscode.Disposable {
 
   public dispose() {}
 
+  public static resetCompletionPath() {
+    Context._context.updateBoardChoiceStatus(
+      Context._context._currentBoard
+    );
+  }
+
   public async selectBoard() {
     const chosen = await vscode.window.showQuickPick(
       Board.getBoardChoices()
@@ -51,16 +58,23 @@ export class Context implements vscode.Disposable {
   }
 
   private updateBoardChoiceStatus(board: Board) {
+    let paths: string[] = new Array<string>();
     this._currentBoard = board;
-    console.log(this._currentBoard);
+
+    if(board) {
+      paths.push(
+        path.join(this.extensionPath, "boards", board.vid, board.pid)
+      );
+    }
+    paths.push(path.join(this.extensionPath, "stubs"));
+    let libPath: string = LibraryManager.getInstance().completionPath();
+    if(libPath) {
+      paths.push(libPath);
+    }
 
     vscode.workspace.getConfiguration().update(
       "python.autoComplete.extraPaths", 
-      [
-        posix.join(this.extensionPath, "boards", board.vid, board.pid),
-        posix.join(this.extensionPath, "stubs"),
-        this.libraryPath
-      ]
+      paths
     );
 
     if (board) {

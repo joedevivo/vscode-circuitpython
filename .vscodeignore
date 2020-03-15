@@ -8,3 +8,10 @@ vsc-extension-quickstart.md
 **/.eslintrc.json
 **/*.map
 **/*.ts
+.mypy_cache
+.env
+circup
+circup*
+TODO.md
+.tool-versions
+circuitpython

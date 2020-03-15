@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as $ from 'shelljs';
 import { execSync } from "child_process";
 
-import { posix } from 'path';
+import * as path from 'path';
 import * as fs from 'fs';
 
 class Library implements vscode.QuickPickItem {
@@ -64,7 +64,7 @@ export class Circup implements vscode.Disposable {
   }
 
   public getLibraryPath(): string {
-    return posix.join(
+    return path.join(
       this._dataDir, 
       "adafruit_circuitpython_bundle_py", 
       "adafruit-circuitpython-bundle-py-" + this._tag, 
@@ -73,7 +73,7 @@ export class Circup implements vscode.Disposable {
   }
 
   private _setTag() {
-    let circupTag: string = posix.join(
+    let circupTag: string = path.join(
       this._dataDir,
       "circup.json"
     );
