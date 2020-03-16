@@ -3,6 +3,7 @@ import * as os from "os";
 import * as serialport from 'serialport';
 import SerialPort = require("serialport");
 import { Context } from "../context";
+import { Board } from "../boards/board";
 
 class SerialPickItem implements vscode.QuickPickItem {
   public label: string;
@@ -10,7 +11,23 @@ class SerialPickItem implements vscode.QuickPickItem {
   public serialPort: serialport.PortInfo;
   public constructor(sp: serialport.PortInfo) {
     this.label = sp.path;
-    this.description = sp.path;
+    if (sp.vendorId && sp.productId) {
+      let b: Board = Board.lookup(sp.vendorId, sp.productId);
+      if (b) {
+        this.description = `${b.manufacturer}:${b.product}`;
+      } 
+    }
+    if(!this.description) {
+      let bits: string[] = 
+        [
+          sp.manufacturer,
+          sp.vendorId,
+          sp.productId
+        ].filter((v: string, i, a) => v);
+      if(bits.length > 0) {
+        this.description = bits.join(" | ");
+      }
+    }
     this.serialPort = sp;
   }
 }

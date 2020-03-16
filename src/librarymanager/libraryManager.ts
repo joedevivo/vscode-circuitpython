@@ -9,6 +9,7 @@ import { Library } from './library';
 import * as globby from 'globby';
 import * as fs_extra from 'fs-extra';
 import { Context } from '../context';
+import * as trash from 'trash';
 
 class LibraryQP implements vscode.QuickPickItem {
   // QuickPickItem impl
@@ -145,10 +146,7 @@ export class LibraryManager implements vscode.Disposable {
       // In case nothing exists yet.
       return null;
     }
-    return path.join(
-      this.localBundleDir,
-      "lib"
-    );
+    return this.bundlePath("py"); 
   }
 
   public async reloadProjectLibraries() {
@@ -295,6 +293,18 @@ export class LibraryManager implements vscode.Disposable {
       }
     });
     this.localBundleDir = localBundleDir;
+
+    // We're done. New bundle in $tag, so let's delete the ones that aren't
+    // this.
+
+    fs.readdir(this.bundleDir, {withFileTypes: true}, (err, bundles) => {
+      bundles.forEach(b => {
+        if(b.isDirectory() && b.name !== this.tag) {
+          let old: string = path.join(this.bundleDir, b.name);
+          trash(old).then(() => null);
+        }
+      });
+    });
     return true;
   }
 

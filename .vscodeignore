@@ -15,3 +15,11 @@ circup*
 TODO.md
 .tool-versions
 circuitpython
+.github
+azure-pipelines.yml
+build_stubs.py
+requirements.txt
+*.vsix
+native
+Makefile
+package.sh
