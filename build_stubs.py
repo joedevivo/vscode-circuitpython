@@ -33,6 +33,9 @@ for b in board_dirs :
           usb_product = line.split("=")[1].split("#")[0].strip('" \n')
         elif line.startswith("USB_MANUFACTURER"):
           usb_manufacturer = line.split("=")[1].split("#")[0].strip('" \n')
+    if usb_manufacturer == "Nadda-Reel Company LLC":
+      continue
+
     board = { 'vid': usb_vid, 'pid': usb_pid, 'product': usb_product, 'manufacturer': usb_manufacturer }
     boards.append(board)
     print("{0}:{1} {2}, {3}".format(usb_vid, usb_pid, usb_manufacturer, usb_product))
@@ -47,7 +50,7 @@ for b in board_dirs :
       outfile.write('board\n')
       outfile.write('"""\n')
       for line in p:
-        pin = re.search(r'\s*{ MP_ROM_QSTR\(MP_QSTR_([^\)]*)', line)
+        pin = re.search(r'.*_QSTR\(MP_QSTR_([^\)]*)', line)
         if not(pin == None):
           if first:
             outfile.write("    board.{0}: Any = ...\n".format(pin[1]))
