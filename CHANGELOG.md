@@ -2,6 +2,10 @@
 
 All notable changes to the "vscode-circuitpython" extension will be documented in this file.
 
+## [0.0.3]
+
+- More board completions
+
 ## [0.0.2]
 
 - Rebuilt for Electron@7
