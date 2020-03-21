@@ -51,13 +51,25 @@ export class SerialMonitor implements vscode.Disposable {
 
   private _openPortStatusBar: vscode.StatusBarItem;
   private _outputChannel: vscode.OutputChannel;
+  private _terminal: vscode.Terminal;
+  private _writeEmitter: vscode.EventEmitter<string>;
 
   private constructor() {
     this.initialize();
   }
 
   public initialize() {
-    this._outputChannel = vscode.window.createOutputChannel(SerialMonitor.SERIAL_MONITOR);
+    //this._outputChannel = vscode.window.createOutputChannel(SerialMonitor.SERIAL_MONITOR);
+    this._writeEmitter = new vscode.EventEmitter<string>();
+    let pty:vscode.Pseudoterminal = {
+      onDidWrite: this._writeEmitter.event,
+      open: () => this._writeEmitter.fire('Circuit Python Serial Monitor\r\n'),
+      close: () => {},
+      handleInput: (data: string) => {
+        this._serialPort.write(data);
+      }
+    };
+    this._terminal = vscode.window.createTerminal({name: SerialMonitor.SERIAL_MONITOR, pty: pty });
     this._portsStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 20);
     this._portsStatusBar.command = "circuitpython.selectSerialPort";
     this._portsStatusBar.tooltip = "Select Serial Port";
@@ -119,21 +131,27 @@ export class SerialMonitor implements vscode.Disposable {
       this._serialPort = new SerialPort(this._currentPort.serialPort.path, {baudRate: SerialMonitor.BAUD_RATE, autoOpen: false});
     }
 
-    this._outputChannel.show();
+    //this._outputChannel.show();
+    this._terminal.show();
     try {
       this._serialPort.open();
       this.updatePortStatus(true);
     } catch (error) {
-      this._outputChannel.appendLine("[Error]" + error.toString());
+      //this._outputChannel.appendLine("[Error]" + error.toString());
+      this._writeEmitter.fire("[Error]" + error.toString() + "\r\n\r\n");
       console.log(
                 `Failed to open serial port ${this._currentPort} due to error: + ${error.toString()}`);
     }
-    this._outputChannel.appendLine(`[Open] Connection to ${this._currentPort.serialPort.path}${os.EOL}`);
+    //this._outputChannel.appendLine(`[Open] Connection to ${this._currentPort.serialPort.path}${os.EOL}`);
+    this._writeEmitter.fire(`[Open] Connection to ${this._currentPort.serialPort.path}${os.EOL}\r\n`);
+    //this._terminal.sendText(`is this different?\r\n`);
     this._serialPort.on("data", (_event) => {
-      this._outputChannel.append(_event.toString());
+      //this._outputChannel.append(_event.toString());
+      this._writeEmitter.fire(_event.toString());
     });
     this._serialPort.on("error", (_error) => {
-      this._outputChannel.appendLine("[Error]" + _error.toString());
+      //this._outputChannel.appendLine("[Error]" + _error.toString());
+      this._writeEmitter.fire("[Error]" + _error.toString() + "\r\n\r\n");
     });
   }
 
@@ -142,8 +160,9 @@ export class SerialMonitor implements vscode.Disposable {
     if (this._serialPort) {
       const result = await this._serialPort.close();
       this._serialPort = null;
-      if (this._outputChannel) {
-        this._outputChannel.appendLine(`[Done] Closed the serial port ${os.EOL}`);
+      //if (this._outputChannel) {
+      if (this._writeEmitter) {
+        this._writeEmitter.fire(`[Done] Closed the serial port ${os.EOL}`);
       }
       this.updatePortStatus(false);
       return result;

@@ -36,6 +36,9 @@ You can use it with the following commands:
 connect to, then it will display the serial output form the board attached to
 that port. The port can be changed by clicking on it's path in the status bar.
 
+Hit `Ctrl-C` and any key to enter the Circuit Python REPL, and `Ctrl-D` to
+reload.
+
 Note: There are linux permissions issues with the serial console, but if you're
 on linux, you're probably used to that.
 

@@ -1,15 +1,9 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import * as fs from 'fs';
 import { SerialMonitor } from "./serialmonitor/serialMonitor";
 import { Context } from "./context";
-import { execSync } from "child_process";
-import * as $ from 'shelljs';
 import { Board } from "./boards/board";
-import { Circup } from './circup';
 import { LibraryManager } from './librarymanager/libraryManager';
-
-import * as drivelist from 'drivelist';
 import { DeviceManager } from './devicemanager/deviceManager';
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -51,9 +45,6 @@ export async function activate(context: vscode.ExtensionContext) {
 	// Disable jedi
 	vscode.workspace.getConfiguration().update("python.jediEnabled", false);
 
-	if (!SerialMonitor.getInstance().initialized) {
-		SerialMonitor.getInstance().initialize();
-	}
 	const serialMonitor = SerialMonitor.getInstance();
 	context.subscriptions.push(serialMonitor);
 
