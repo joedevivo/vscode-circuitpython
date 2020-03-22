@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import * as os from "os";
 import * as serialport from 'serialport';
 import SerialPort = require("serialport");
-import { Context } from "../context";
+import { BoardManager } from "../boards/boardManager";
 import { Board } from "../boards/board";
 
 class SerialPickItem implements vscode.QuickPickItem {
@@ -103,17 +103,17 @@ export class SerialMonitor implements vscode.Disposable {
         return a.label === b.label ? 0 : (a.label > b.label ? 1 : -1);
     }), { placeHolder: "Select a serial port" });
     if (chosen && chosen.label) {
-      await Context.getInstance().autoSelectBoard(chosen.serialPort.vendorId, chosen.serialPort.productId);
+      await BoardManager.getInstance().autoSelectBoard(chosen.serialPort.vendorId, chosen.serialPort.productId);
       this.updatePortListStatus(chosen);
     }
   }
 
   public async openSerialMonitor() {
     if (!this._currentPort) {
-      const ans = await vscode.window.showInformationMessage("No serial port was selected, please select a serial port first", "Yes", "No");
-      if (ans === "Yes") {
-          await this.selectSerialPort(null, null);
-      }
+      //const ans = await vscode.window.showInformationMessage("No serial port was selected, please select a serial port first", "Yes", "No");
+      //if (ans === "Yes") {
+      await this.selectSerialPort(null, null);
+      //}
       if (!this._currentPort) {
           return;
       }

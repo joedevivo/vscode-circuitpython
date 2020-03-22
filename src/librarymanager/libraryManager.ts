@@ -8,7 +8,7 @@ import * as _ from 'lodash';
 import { Library } from './library';
 import * as globby from 'globby';
 import * as fs_extra from 'fs-extra';
-import { Context } from '../context';
+import { BoardManager } from '../boards/boardManager';
 import * as trash from 'trash';
 
 class LibraryQP implements vscode.QuickPickItem {
@@ -80,8 +80,8 @@ export class LibraryManager implements vscode.Disposable {
   public static BUNDLE_VERSION_REGEX: RegExp = /\d\d\d\d\d\d\d\d/; //new RegExp('[\\d', 'i')
   //public static DUNDER_ASSIGN_RE: RegExp = /^__\w+__\s*=\s*['"].+['"]$/;
 
-  // storageRootDir is passed in from the extension context as
-  // `context.globalStoragePath` We'll keep up to date libraries here, and all
+  // storageRootDir is passed in from the extension BoardManager as
+  // `BoardManager.globalStoragePath` We'll keep up to date libraries here, and all
   // instances of the extension can look here for them.
   private storageRootDir: string = null;
 
@@ -273,7 +273,7 @@ export class LibraryManager implements vscode.Disposable {
       vscode.window.showInformationMessage(`Bundle updated to ${tag}`);
     }
     this.verifyBundle(tag);
-    Context.resetCompletionPath();
+    BoardManager.resetCompletionPath();
   }
 
   private verifyBundle(tag: string): boolean {

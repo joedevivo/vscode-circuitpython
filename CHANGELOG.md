@@ -3,6 +3,12 @@
 All notable changes to the "vscode-circuitpython" extension will be documented
 in this file.
 
+## [0.0.5]
+
+- Removed dialog on serial monitor open
+- stores board info in settings.json, which has the effect of persisting your
+  board choice for a project between sessions.
+
 ## [0.0.4]
 
 - Refactored the serial monitor from an output channel to a terminal, allowing
@@ -16,7 +22,7 @@ in this file.
 
 - Rebuilt for Electron@7
 - Reimplemented circup features directly in the extension, see libraryManager.ts for details
-  - moves older bunldes to the Trash instead of deleting.
+  - moves older bundles to the Trash instead of deleting.
 - Fixed OS dependent paths ( removed direct calls to path.posix )
 - In theory, native bindings should work for windows and mac
   - no linux support yet, but it's on the way. I need to streamline the very

@@ -44,9 +44,9 @@ export class Board implements QuickPickItem {
   }
   private static _normalizeHex(hex: string): string {
     let n: string = hex;
-    if (hex.length == 4)  {
+    if (hex.length === 4)  {
       n = "0x" + hex.toUpperCase();
-    } else if(hex.length == 6) {
+    } else if(hex.length === 6) {
       n = "0x" + hex.substring(2).toUpperCase();
     }
     return n;

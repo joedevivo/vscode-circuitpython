@@ -1,22 +1,22 @@
 import * as vscode from "vscode";
-import { Board } from './boards/board';
+import { Board } from './board';
 import * as path from 'path';
-import { LibraryManager } from "./librarymanager/libraryManager";
+import { LibraryManager } from "../librarymanager/libraryManager";
 
-export class Context implements vscode.Disposable {
-  public extensionPath: string = null;
+export class BoardManager implements vscode.Disposable {
+  private extensionPath: string = null;
   public libraryPath: string = null;
 
-  public static getInstance(): Context {
-    if (Context._context === null) {
-      Context._context = new Context();
+  public static getInstance(): BoardManager {
+    if (BoardManager._boardManager === null) {
+      BoardManager._boardManager = new BoardManager();
     }
-    return Context._context;
+    return BoardManager._boardManager;
   }
 
   private _boardChoice: vscode.StatusBarItem;
   private _currentBoard: Board;
-  private static _context: Context = null;
+  private static _boardManager: BoardManager = null;
 
   private constructor() {
     this.initialize();
@@ -29,11 +29,22 @@ export class Context implements vscode.Disposable {
     this._boardChoice.show();
   }
 
+  public setExtensionPath(p: string) {
+    this.extensionPath = p;
+    let conf: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration("circuitpython.board");
+    let vid: string = conf.get("vid");
+    let pid: string = conf.get("pid");
+    if(vid && pid) {
+      let b: Board = Board.lookup(vid, pid);
+      this.updateBoardChoiceStatus(b);
+    }
+  }
+
   public dispose() {}
 
   public static resetCompletionPath() {
-    Context._context.updateBoardChoiceStatus(
-      Context._context._currentBoard
+    BoardManager._boardManager.updateBoardChoiceStatus(
+      BoardManager._boardManager._currentBoard
     );
   }
 
@@ -49,8 +60,6 @@ export class Context implements vscode.Disposable {
   }
 
   public async autoSelectBoard(vid: string, pid: string) {
-    console.log(pid);
-    console.log(Board.lookup(vid, pid));
     const chosen = Board.lookup(vid, pid);
     if (chosen && chosen.label) {
       this.updateBoardChoiceStatus(chosen);
@@ -58,6 +67,15 @@ export class Context implements vscode.Disposable {
   }
 
   private updateBoardChoiceStatus(board: Board) {
+    /* If this is a change, update the workspace config */
+    if (!(this._currentBoard &&
+          this._currentBoard.vid === board.vid &&
+          this._currentBoard.pid === board.pid)) {
+      let conf: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration("circuitpython.board");
+      conf.update("vid", board.vid);
+      conf.update("pid", board.pid);
+    }
+
     let paths: string[] = new Array<string>();
     this._currentBoard = board;
 

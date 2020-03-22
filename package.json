@@ -1,131 +1,152 @@
 {
-	"name": "vscode-circuitpython",
-	"displayName": "CircuitPython",
-	"description": "CircuitPython for Visual Studio Code",
-	"version": "0.0.4",
-	"publisher": "joedevivo",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/joedevivo/vscode-circuitpython.git"
-	},
-	"bugs": {
-		"url": "https://github.com/joedevivo/vscode-circuitpython/issues"
-	},
-	"engines": {
-		"vscode": "^1.42.0"
-	},
-	"icon": "images/BlinkaOnDark.png",
-	"categories": [
-		"Programming Languages"
-	],
-	"keywords": [
-		"iot",
-		"adafruit",
-		"circuitpython",
-		"blinka"
-	],
-	"activationEvents": [
-		"workspaceContains:/code.py",
-		"workspaceContains:/boot_out.txt",
-		"onCommand:circuitpython.openSerialMonitor",
-		"onCommand:circuitpython.selectSerialPort",
-		"onCommand:circuitpython.sendMessageToSerialPort",
-		"onCommand:circuitpython.closeSerialMonitor"
-	],
-	"main": "./out/extension.js",
-	"contributes": {
-		"commands": [
-			{
-				"command": "circuitpython.selectSerialPort",
-				"title": "CircuitPython: Select Serial Port"
-			},
-			{
-				"command": "circuitpython.openSerialMonitor",
-				"title": "CircuitPython: Open Serial Monitor"
-			},
-			{
-				"command": "circuitpython.closeSerialMonitor",
-				"title": "CircuitPython: Close Serial Monitor"
-			},
-			{
-				"command": "circuitpython.sendMessageToSerialPort",
-				"title": "CircuitPython: Send Text to Serial Port"
-			},
-			{
-				"command": "circuitpython.selectBoard",
-				"title": "CircuitPython: Choose CircuitPython Board"
-			},
-			{
-				"command": "circuitpython.library.show",
-				"title": "CircuitPython: Show Available Libraries"
-			},
-			{
-				"command": "circuitpython.library.list",
-				"title": "CircuitPython: List Project Libraries"
-			},
-			{
-				"command": "circuitpython.library.reload",
-				"title": "CircuitPython: Reload Project Libraries"
-			},
-			{
-				"command": "circuitpython.library.update",
-				"title": "CircuitPython: Update All Libraries"
-			}
-		],
-		"configuration": {},
-		"keybindings": [
-			{
-				"command": "circuitpython.openSerialMonitor",
-				"key": "ctrl+alt+r",
-				"mac": "cmd+alt+r"
-			}
-		]
-	},
-	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"lint": "eslint src --ext ts",
-		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile && npm run lint",
-		"test": "node ./out/test/runTest.js"
-	},
-	"extensionDependencies": [
-		"ms-python.python"
-	],
-	"devDependencies": {
-		"@types/glob": "^7.1.1",
-		"@types/mocha": "^7.0.1",
-		"@types/node": "^12.11.7",
-		"@types/vscode": "^1.42.0",
-		"@typescript-eslint/eslint-plugin": "^2.18.0",
-		"@typescript-eslint/parser": "^2.18.0",
-		"electron": "^7.1.14",
-		"electron-rebuild": "^1.10.1",
-		"eslint": "^6.8.0",
-		"glob": "^7.1.6",
-		"mocha": "^7.0.1",
-		"node-gyp": "^6.1.0",
-		"node-pre-gyp": "^0.14.0",
-		"typescript": "^3.7.5",
-		"vsce": "^1.74.0",
-		"vscode-test": "^1.3.0"
-	},
-	"dependencies": {
-		"@types/lodash": "^4.14.149",
-		"@types/serialport": "^8.0.0",
-		"axios": "^0.19.2",
-		"drivelist": "^8.0.10",
-		"fs-extra": "^8.1.0",
-		"globby": "^11.0.0",
-		"lodash": "^4.17.15",
-		"npm": "^6.14.1",
-		"semver": "^7.1.3",
-		"serialport": "^8.0.7",
-		"shelljs": "^0.8.3",
-		"trash": "^6.1.1",
-		"typed-rest-client": "^1.7.2",
-		"typescript-http-client": "^0.10.1",
-		"typescript-string-operations": "^1.3.2",
-		"unzipper": "^0.10.10"
-	}
+  "name": "vscode-circuitpython",
+  "displayName": "CircuitPython",
+  "description": "CircuitPython for Visual Studio Code",
+  "version": "0.0.5",
+  "publisher": "joedevivo",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joedevivo/vscode-circuitpython.git"
+  },
+  "bugs": {
+    "url": "https://github.com/joedevivo/vscode-circuitpython/issues"
+  },
+  "engines": {
+    "vscode": "^1.42.0"
+  },
+  "icon": "images/BlinkaOnDark.png",
+  "categories": [
+    "Programming Languages"
+  ],
+  "keywords": [
+    "iot",
+    "adafruit",
+    "circuitpython",
+    "blinka"
+  ],
+  "activationEvents": [
+    "workspaceContains:/code.py",
+    "workspaceContains:/boot_out.txt",
+    "onCommand:circuitpython.openSerialMonitor",
+    "onCommand:circuitpython.selectSerialPort",
+    "onCommand:circuitpython.closeSerialMonitor"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "circuitpython.selectSerialPort",
+        "title": "CircuitPython: Select Serial Port"
+      },
+      {
+        "command": "circuitpython.openSerialMonitor",
+        "title": "CircuitPython: Open Serial Monitor"
+      },
+      {
+        "command": "circuitpython.closeSerialMonitor",
+        "title": "CircuitPython: Close Serial Monitor"
+      },
+      {
+        "command": "circuitpython.sendMessageToSerialPort",
+        "title": "CircuitPython: Send Text to Serial Port"
+      },
+      {
+        "command": "circuitpython.selectBoard",
+        "title": "CircuitPython: Choose CircuitPython Board"
+      },
+      {
+        "command": "circuitpython.library.show",
+        "title": "CircuitPython: Show Available Libraries"
+      },
+      {
+        "command": "circuitpython.library.list",
+        "title": "CircuitPython: List Project Libraries"
+      },
+      {
+        "command": "circuitpython.library.reload",
+        "title": "CircuitPython: Reload Project Libraries"
+      },
+      {
+        "command": "circuitpython.library.update",
+        "title": "CircuitPython: Update All Libraries"
+      }
+    ],
+    "configuration": {
+      "title": "Circuit Python",
+      "properties": {
+        "circuitpython.board.vid": {
+          "type": ["string", "null"],
+          "default": null,
+          "description": "Vendor ID for the current board.",
+          "scope": "window"
+        },
+        "circuitpython.board.pid": {
+          "type": ["string", "null"],
+          "default": null,
+          "description": "Product ID for the current board.",
+          "scope": "window"
+        },
+        "circuitpython.board.version": {
+          "type": ["string", "null"],
+          "default": null,
+          "description": "Circuit Python version for the current board.",
+          "scope": "window"
+        }
+      }
+    },
+    "keybindings": [
+      {
+        "command": "circuitpython.openSerialMonitor",
+        "key": "ctrl+alt+r",
+        "mac": "cmd+alt+r"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "lint": "eslint src --ext ts",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "test": "node ./out/test/runTest.js"
+  },
+  "extensionDependencies": [
+    "ms-python.python"
+  ],
+  "devDependencies": {
+    "@types/glob": "^7.1.1",
+    "@types/mocha": "^7.0.1",
+    "@types/node": "^12.11.7",
+    "@types/vscode": "^1.42.0",
+    "@typescript-eslint/eslint-plugin": "^2.18.0",
+    "@typescript-eslint/parser": "^2.18.0",
+    "electron": "^7.1.14",
+    "electron-rebuild": "^1.10.1",
+    "eslint": "^6.8.0",
+    "glob": "^7.1.6",
+    "mocha": "^7.0.1",
+    "node-gyp": "^6.1.0",
+    "node-pre-gyp": "^0.14.0",
+    "typescript": "^3.7.5",
+    "vsce": "^1.74.0",
+    "vscode-test": "^1.3.0"
+  },
+  "dependencies": {
+    "@types/lodash": "^4.14.149",
+    "@types/serialport": "^8.0.0",
+    "axios": "^0.19.2",
+    "drivelist": "^8.0.10",
+    "fs-extra": "^8.1.0",
+    "globby": "^11.0.0",
+    "lodash": "^4.17.15",
+    "npm": "^6.14.1",
+    "semver": "^7.1.3",
+    "serialport": "^8.0.7",
+    "shelljs": "^0.8.3",
+    "trash": "^6.1.1",
+    "typed-rest-client": "^1.7.2",
+    "typescript-http-client": "^0.10.1",
+    "typescript-string-operations": "^1.3.2",
+    "unzipper": "^0.10.10"
+  }
 }

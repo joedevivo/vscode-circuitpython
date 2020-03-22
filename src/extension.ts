@@ -1,14 +1,17 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { SerialMonitor } from "./serialmonitor/serialMonitor";
-import { Context } from "./context";
+import { BoardManager } from "./boards/boardManager";
 import { Board } from "./boards/board";
 import { LibraryManager } from './librarymanager/libraryManager';
 import { DeviceManager } from './devicemanager/deviceManager';
 
 export async function activate(context: vscode.ExtensionContext) {
+	// Disable jedi
+	vscode.workspace.getConfiguration().update("python.jediEnabled", false);
+
 	// Update bundle and load metadata on activation
-	await LibraryManager.newInstance(context.globalStoragePath); //.then(() => null);
+	await LibraryManager.newInstance(context.globalStoragePath);
 	let lib: LibraryManager = LibraryManager.getInstance();
 	let libraryShowCmd = vscode.commands.registerCommand('circuitpython.library.show', () =>
 		lib.show()
@@ -36,14 +39,11 @@ export async function activate(context: vscode.ExtensionContext) {
 		"metadata.json"
 	);
 	Board.loadBoards(metadataFile);
-	const extContext = Context.getInstance();
-	extContext.extensionPath = context.extensionPath;
+	const boardManager = BoardManager.getInstance();
+	boardManager.setExtensionPath(context.extensionPath);
 	
 	// Path to Circuit Python Libraries
-	extContext.libraryPath = lib.completionPath();
-
-	// Disable jedi
-	vscode.workspace.getConfiguration().update("python.jediEnabled", false);
+	boardManager.libraryPath = lib.completionPath();
 
 	const serialMonitor = SerialMonitor.getInstance();
 	context.subscriptions.push(serialMonitor);
@@ -64,7 +64,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(closeSerialMonitorCmd);
 
 	let selectBoardCmd = vscode.commands.registerCommand('circuitpython.selectBoard', () => 
-		extContext.selectBoard()
+	  boardManager.selectBoard()
 	);
 	context.subscriptions.push(selectBoardCmd);
 }
