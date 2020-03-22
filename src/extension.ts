@@ -31,6 +31,11 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(libraryReloadProjectCmd);
 	vscode.workspace.onDidDeleteFiles((e: vscode.FileDeleteEvent) => lib.reloadProjectLibraries());
 
+	let checkForBundleUpdates = vscode.commands.registerCommand('circuitpython.library.fetch', () =>
+		lib.updateBundle()
+	);
+	context.subscriptions.push(checkForBundleUpdates);
+
 	let dev: DeviceManager = await DeviceManager.getInstance();
 
 	let metadataFile: string = path.join(

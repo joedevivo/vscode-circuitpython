@@ -69,6 +69,10 @@
       {
         "command": "circuitpython.library.update",
         "title": "CircuitPython: Update All Libraries"
+      },
+      {
+        "command": "circuitpython.library.fetch",
+        "title": "CircuitPython: Check for latest bundle"
       }
     ],
     "configuration": {
@@ -77,19 +81,19 @@
         "circuitpython.board.vid": {
           "type": ["string", "null"],
           "default": null,
-          "description": "Vendor ID for the current board.",
+          "description": "Vendor ID for the current board. Intended to be set at the workspace level.",
           "scope": "window"
         },
         "circuitpython.board.pid": {
           "type": ["string", "null"],
           "default": null,
-          "description": "Product ID for the current board.",
+          "description": "Product ID for the current board. Intended to be set at the workspace level.",
           "scope": "window"
         },
         "circuitpython.board.version": {
           "type": ["string", "null"],
           "default": null,
-          "description": "Circuit Python version for the current board.",
+          "description": "Circuit Python version for the current board. Intended to be set at the workspace level.",
           "scope": "window"
         }
       }

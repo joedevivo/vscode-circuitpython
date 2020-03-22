@@ -223,19 +223,38 @@ export class LibraryManager implements vscode.Disposable {
   // Find it boot_out, so put boot_out.txt in your project root if you want this.
   // TODO: Allow this to be set in workspace settings
   private getProjectCPVer(): string {
+    let confVer: string = 
+      vscode.workspace.getConfiguration("circuitpython.board").get("version");
+
     let bootOut: string = null;
-    let ver: string = "unknown";
+    let ver: string = null;
     let b: string = path.join(
       this.getProjectRoot(),
       "boot_out.txt"
     );
-    console.log(b);
-    if (bootOut === null && fs.existsSync(b)) {
+
+    let exists: boolean = fs.existsSync(b);
+    // If no boot_out.txt && configured version, use configured
+    if (!exists && confVer) {
+      ver = confVer;
+    } else if (exists) {
       bootOut = b;
-      ver = fs.readFileSync(bootOut).toString().split(";")[0].split(" ")[2];
+      try {
+        //ver = fs.readFileSync(bootOut).toString().split(";")[0].split(" ")[2];
+        let _a: string = fs.readFileSync(b).toString();
+        let _b: string[] = _a.split(";");
+        let _c: string = _b[0];
+        let _d: string[] = _c.split(" ");
+        let _e: string = _d[2];
+        ver = _e;
+      } catch (error) {
+        ver = "unknown";
+      }
     }
+    vscode.workspace.getConfiguration("circuitpython.board").update("version", ver);
     return ver;
   }
+
   private getProjectLibDir(): string {
     let libDir: string = null;
 
@@ -261,8 +280,7 @@ export class LibraryManager implements vscode.Disposable {
     }
   }
 
-  // TODO: updateBundle doesn't remove older bundles
-  private async updateBundle() {
+  public async updateBundle() {
     let tag: string = await this.getLatestBundleTag();
     if (tag === this.tag) {
       vscode.window.showInformationMessage(`Bundle already at latest version: ${tag}`);

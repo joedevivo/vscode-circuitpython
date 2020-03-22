@@ -29,6 +29,9 @@ You can use it with the following commands:
   filesystem outside of vscode.
 * `CircuitPython: Update All Libraries`
   Equivalent of `circup update --all`
+* `CircuitPython: Check for latest bundle`
+  Compares the bundle on disk to the latest github release, downloads the 
+  release if it's newer.
 
 ### Serial Console
 
@@ -58,41 +61,42 @@ library and all py source files in the adafruit bundle to your completion path.
 
 ![Demo](images/circuitpy-demo.gif)
 
-## TODO
-
-* Only tested so far on macOS 10.15
-
-
-## Future Work
+## TODO / Future Work
 
 * Refactor as I learn more about VSCode Extensions & Typescript
-* Allow board settings to persist in workspace settings
-  - include circuit python version
-* Automate the platform specific binding stuff
-* Manually check for new Adafruit Bundle
+  [#11](joedevivo/vscode-circuitpython#11)
+* Automate the platform specific binding stuff [#8](joedevivo/vscode-circuitpython#8)
 * Share library state in globalState, only managing it once per all
-  vscode workspaces
-* Quick open Adafruit Bundle examples
-* Quick open readthedocs.io for a library
-
+  vscode workspaces [#6](joedevivo/vscode-circuitpython#6)
+* Quick open Adafruit Bundle examples [#10](joedevivo/vscode-circuitpython#10)
+* Quick open readthedocs.io for a library [#9](joedevivo/vscode-circuitpython#9)
 
 ## Requirements
 
 ## Extension Settings
 
-None so far.
+### Board Settings
+
+Board specific settings can be stored in a project's `.vscode/settings.json`
+file, which will default to this board. This is great for when opening up the
+CIRCUITPY drive as a vscode workspace, and will be automatically set every time
+you choose a board.
+
+You can also use this for projects you're working from on disk, with the intent
+of running on a specific board.
+
+You can also set these at a user level, although that's not the primary intent.
+If you do this, it will get overridden at the workspace level if you ever touch
+the choose board dropdown or open a serial monitor. 
+
+I'd probably have restricted the scope to workspace if that was an option.
+
+`circuitpython.board.vid`: Vendor ID for the project's board
+`circuitpython.board.pid`: Product ID for the project's board
+`circuitpython.board.version`: Persisted for choosing the right mpy binaries
 
 ## Known Issues
 
-* Only tested so far on macOS. YMMV on other platforms for now, but I have access
-  to enough that the work will continue if there's demand there.
- 
-  modules.
 ## Release Notes
 
-### 0.0.1
-
-Initial release.
-* Serial Monitor
-* Autocomplete
-* Circup
+See the [Changelog](CHANGELOG.md)

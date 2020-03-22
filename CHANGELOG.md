@@ -8,6 +8,7 @@ in this file.
 - Removed dialog on serial monitor open
 - stores board info in settings.json, which has the effect of persisting your
   board choice for a project between sessions.
+- Added command to manually check for bundle update
 
 ## [0.0.4]
 
