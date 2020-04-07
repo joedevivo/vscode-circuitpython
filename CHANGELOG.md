@@ -3,6 +3,13 @@
 All notable changes to the "vscode-circuitpython" extension will be documented
 in this file.
 
+## [0.1.0]
+
+- Reworked internals to be less `static`
+- more robust autocomplete path handling
+- updated stubs for Circuit Python 5.1.0
+- new boards
+
 ## [0.0.5]
 
 - Removed dialog on serial monitor open

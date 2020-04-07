@@ -16,7 +16,6 @@ export class Board implements QuickPickItem {
     this.pid = m["pid"];
     this.product = m["product"];
     this.manufacturer = m["manufacturer"];
-    //this.description = this.manufacturer;
     this.label = this.manufacturer + ":" + this.product;
   }
 

@@ -2,30 +2,24 @@ import * as vscode from "vscode";
 import { Board } from './board';
 import * as path from 'path';
 import { LibraryManager } from "../librarymanager/libraryManager";
+import { Container } from "../container";
 
 export class BoardManager implements vscode.Disposable {
   private extensionPath: string = null;
   public libraryPath: string = null;
 
-  public static getInstance(): BoardManager {
-    if (BoardManager._boardManager === null) {
-      BoardManager._boardManager = new BoardManager();
-    }
-    return BoardManager._boardManager;
-  }
-
   private _boardChoice: vscode.StatusBarItem;
   private _currentBoard: Board;
   private static _boardManager: BoardManager = null;
 
-  private constructor() {
-    this.initialize();
-  }
-
-  public initialize() {
+  public constructor(board: Board) {
     this._boardChoice = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 30);
     this._boardChoice.command = "circuitpython.selectBoard";
+    this._boardChoice.text = "<Choose a board>";
     this._boardChoice.tooltip = "Choose Circuit Python Board";
+    if (board !== null) {
+      this._boardChoice.text = board.label;
+    }
     this._boardChoice.show();
   }
 
@@ -42,12 +36,6 @@ export class BoardManager implements vscode.Disposable {
 
   public dispose() {}
 
-  public static resetCompletionPath() {
-    BoardManager._boardManager.updateBoardChoiceStatus(
-      BoardManager._boardManager._currentBoard
-    );
-  }
-
   public async selectBoard() {
     const chosen = await vscode.window.showQuickPick(
       Board.getBoardChoices()
@@ -59,42 +47,7 @@ export class BoardManager implements vscode.Disposable {
     }
   }
 
-  public async autoSelectBoard(vid: string, pid: string) {
-    const chosen = Board.lookup(vid, pid);
-    if (chosen && chosen.label) {
-      this.updateBoardChoiceStatus(chosen);
-    }
-  }
-
-  private updateBoardChoiceStatus(board: Board) {
-    /* If this is a change, update the workspace config */
-    if (!(this._currentBoard &&
-          this._currentBoard.vid === board.vid &&
-          this._currentBoard.pid === board.pid)) {
-      let conf: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration("circuitpython.board");
-      conf.update("vid", board.vid);
-      conf.update("pid", board.pid);
-    }
-
-    let paths: string[] = new Array<string>();
-    this._currentBoard = board;
-
-    if(board) {
-      paths.push(
-        path.join(this.extensionPath, "boards", board.vid, board.pid)
-      );
-    }
-    paths.push(path.join(this.extensionPath, "stubs"));
-    let libPath: string = LibraryManager.getInstance().completionPath();
-    if(libPath) {
-      paths.push(libPath);
-    }
-
-    vscode.workspace.getConfiguration().update(
-      "python.autoComplete.extraPaths", 
-      paths
-    );
-
+  public updateBoardChoiceStatus(board: Board) {
     if (board) {
       this._boardChoice.text = board.label;
     } else {

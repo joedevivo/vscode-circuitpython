@@ -2,6 +2,9 @@ import * as vscode from 'vscode';
 import * as serialport from 'serialport';
 //import SerialPort = require("serialport");
 import * as drivelist from 'drivelist';
+
+
+
 /*
 There are a few scenarios in which we might manage a device
 
@@ -24,9 +27,7 @@ export class DeviceManager implements vscode.Disposable {
   }
   private static _instance: DeviceManager = null;
 
-  public constructor() {
-
-  }
+  public constructor() {}
 
   private async findDevice(): Promise<drivelist.Drive[]> {
     let usbDevices: drivelist.Drive[] =

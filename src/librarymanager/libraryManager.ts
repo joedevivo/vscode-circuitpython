@@ -8,8 +8,8 @@ import * as _ from 'lodash';
 import { Library } from './library';
 import * as globby from 'globby';
 import * as fs_extra from 'fs-extra';
-import { BoardManager } from '../boards/boardManager';
 import * as trash from 'trash';
+import { Container } from '../container';
 
 class LibraryQP implements vscode.QuickPickItem {
   // QuickPickItem impl
@@ -47,23 +47,22 @@ class LibraryQP implements vscode.QuickPickItem {
         break;
       
       default:
-        //vscode.window.showInformationMessage(this.label);
         break;
     }
-    LibraryManager.getInstance().reloadProjectLibraries();
+    Container.reloadProjectLibraries();
   }
   private install() {
     let src: string = LibraryManager.getMpy(path.basename(this.bundleLib.location));
     if(this.bundleLib.isDirectory) {
       fs_extra.copySync(
         src,
-        path.join(LibraryManager.getInstance().projectLibDir, path.basename(this.bundleLib.location)),
+        path.join(Container.getProjectLibDir(), path.basename(this.bundleLib.location)),
         { overwrite: true }
       );
     } else {
       fs.copyFileSync(
         src,
-        path.join(LibraryManager.getInstance().projectLibDir, path.basename(this.bundleLib.location, ".py") + ".mpy"),
+        path.join(Container.getProjectLibDir(), path.basename(this.bundleLib.location, ".py") + ".mpy"),
       );
     }
   }
@@ -74,12 +73,11 @@ class LibraryQP implements vscode.QuickPickItem {
 }
 export class LibraryManager implements vscode.Disposable {
   public static BUNDLE_URL: string = "https://github.com/adafruit/Adafruit_CircuitPython_Bundle";
+
   public static BUNDLE_SUFFIXES: string[] = [
     'py', '4.x-mpy', '5.x-mpy'
   ];
-  public static BUNDLE_VERSION_REGEX: RegExp = /\d\d\d\d\d\d\d\d/; //new RegExp('[\\d', 'i')
-  //public static DUNDER_ASSIGN_RE: RegExp = /^__\w+__\s*=\s*['"].+['"]$/;
-
+  public static BUNDLE_VERSION_REGEX: RegExp = /\d\d\d\d\d\d\d\d/; 
   // storageRootDir is passed in from the extension BoardManager as
   // `BoardManager.globalStoragePath` We'll keep up to date libraries here, and all
   // instances of the extension can look here for them.
@@ -109,20 +107,15 @@ export class LibraryManager implements vscode.Disposable {
 
   // Metadata for libraries in your project
   private workspaceLibraries: Map<string, Library> = new Map<string, Library>();
-  
-  public static getInstance(): LibraryManager {
-    return LibraryManager._libraryManager;
-  }
-  public static async newInstance(storageDir: string) {
-    let l: LibraryManager = new LibraryManager();
-    l.setStorageRoot(storageDir);
 
-    LibraryManager._libraryManager = l;
-    LibraryManager._libraryManager.initialize();
-  }
-  private static _libraryManager: LibraryManager = null;
+  public dispose() {}
 
-  private async initialize() {
+  public constructor(p: string) {
+    this.setStorageRoot(p);
+    this.initialize();
+  }
+
+  public async initialize() {
     // Get the latest Adafruit_CircuitPython_Bundle
     await this.updateBundle();
     // Store the library metadata in memory
@@ -221,7 +214,6 @@ export class LibraryManager implements vscode.Disposable {
     return root;
   }
   // Find it boot_out, so put boot_out.txt in your project root if you want this.
-  // TODO: Allow this to be set in workspace settings
   private getProjectCPVer(): string {
     let confVer: string = 
       vscode.workspace.getConfiguration("circuitpython.board").get("version");
@@ -240,7 +232,6 @@ export class LibraryManager implements vscode.Disposable {
     } else if (exists) {
       bootOut = b;
       try {
-        //ver = fs.readFileSync(bootOut).toString().split(";")[0].split(" ")[2];
         let _a: string = fs.readFileSync(b).toString();
         let _b: string[] = _a.split(";");
         let _c: string = _b[0];
@@ -291,7 +282,7 @@ export class LibraryManager implements vscode.Disposable {
       vscode.window.showInformationMessage(`Bundle updated to ${tag}`);
     }
     this.verifyBundle(tag);
-    BoardManager.resetCompletionPath();
+    Container.updateBundlePath();
   }
 
   private verifyBundle(tag: string): boolean {
@@ -300,21 +291,24 @@ export class LibraryManager implements vscode.Disposable {
       return false;
     }
     let bundles: string[] = fs.readdirSync(localBundleDir).sort();
-    if(!(bundles.length === 3)) {
-      return false;
-    }
+
+    let suffixRegExp: RegExp = new RegExp(`adafruit-circuitpython-bundle-(.*)-${tag}`);
+
+    let suffixes: string[] = [];
+    
     bundles.forEach(b => {
       let p: string = path.join(localBundleDir, b);
       let lib: string[] = fs.readdirSync(p).filter((v,i,a) => v === "lib");
       if(lib.length !== 1) {
         return false;
       }
+      suffixes.push(b.match(suffixRegExp)[1]);
     });
+    LibraryManager.BUNDLE_SUFFIXES = suffixes;
     this.localBundleDir = localBundleDir;
 
     // We're done. New bundle in $tag, so let's delete the ones that aren't
     // this.
-
     fs.readdir(this.bundleDir, {withFileTypes: true}, (err, bundles) => {
       bundles.forEach(b => {
         if(b.isDirectory() && b.name !== this.tag) {
@@ -323,6 +317,7 @@ export class LibraryManager implements vscode.Disposable {
         }
       });
     });
+
     return true;
   }
 
@@ -365,16 +360,16 @@ export class LibraryManager implements vscode.Disposable {
   }
 
   public static getMpy(name: string): string {
-    if(path.extname(name) === ".py" && LibraryManager._libraryManager.mpySuffix !== "py") {
+    if(path.extname(name) === ".py" && Container.getMpySuffix() !== "py") {
       name = path.basename(name, ".py") + ".mpy";
     }
     return path.join(
-      LibraryManager._libraryManager.bundlePath(LibraryManager._libraryManager.mpySuffix), 
+      Container.getBundlePath(), 
       name
     );
   }
 
-  private bundlePath(suffix: string): string {
+  public bundlePath(suffix: string): string {
     return path.join(
       this.localBundleDir,
       `adafruit-circuitpython-bundle-${suffix}-${this.tag}`,
@@ -407,10 +402,5 @@ export class LibraryManager implements vscode.Disposable {
       });
       return resolve(libraryMetadata);
     });
-  }
-
-  public dispose() {}
-
-  private constructor() {
   }
 }

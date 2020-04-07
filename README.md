@@ -52,6 +52,12 @@ If you want to manually choose a different board, a list is available with the
 command `CircuitPython: Choose CircuitPython Board`, and also by clicking on the
 board name in the status bar.
 
+**NOTE FOR WINDOWS USERS**: I have seen trouble with the serial console,
+displaying anything at all. If that happens, try launching VSCode as an
+administrator and see if it works. I have even gotten it to work as a
+non-administrator after this, so perhaps running it as an admin stole the serial
+port from whatever was using it, and then whatever it was didn't grab it again.
+
 ### Auto Complete
 
 Automatically adds stubs for your specific board, the circuitpython standard
