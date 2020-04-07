@@ -14,6 +14,8 @@ import json
 board_dirs = glob.glob("circuitpython/ports/*/boards/*")
 boards = []
 for b in board_dirs :
+  site_path = os.path.split(b)[-1]
+
   config = pathlib.Path(os.path.join(b, "mpconfigboard.mk"))
   print(config)
   pins   = pathlib.Path(os.path.join(b, "pins.c"))
@@ -36,7 +38,7 @@ for b in board_dirs :
     if usb_manufacturer == "Nadda-Reel Company LLC":
       continue
 
-    board = { 'vid': usb_vid, 'pid': usb_pid, 'product': usb_product, 'manufacturer': usb_manufacturer }
+    board = { 'vid': usb_vid, 'pid': usb_pid, 'product': usb_product, 'manufacturer': usb_manufacturer, 'site_path': site_path }
     boards.append(board)
     print("{0}:{1} {2}, {3}".format(usb_vid, usb_pid, usb_manufacturer, usb_product))
     board_pyi_path = pathlib.Path(os.path.join("boards", usb_vid, usb_pid))
