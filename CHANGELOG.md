@@ -3,6 +3,18 @@
 All notable changes to the "vscode-circuitpython" extension will be documented
 in this file.
 
+## [0.1.1]
+- Updated stubs for Circuit Python 5.3.0
+- New Boards
+  - NFC Copy Cat
+  - ST STM32F746G Discovery - CPy
+  - OpenMV-H7 R1
+  - Nucleo H743ZI - CPy
+  - Nucleo F767ZI - CPy
+  - Nucleo F746zg - CPy
+  - Simmel
+- Native bindings for Raspberry Pi/ARM
+
 ## [0.1.0]
 
 - Reworked internals to be less `static`

@@ -294,6 +294,13 @@
     "site_path": "uartlogger2"
   },
   {
+    "vid": "0x1209",
+    "pid": "0xBAB8",
+    "product": "NFC Copy Cat",
+    "manufacturer": "Electronic Cats",
+    "site_path": "nfc_copy_cat"
+  },
+  {
     "vid": "0x04D8",
     "pid": "0xEE8C",
     "product": "datum-Distance",
@@ -568,6 +575,13 @@
   },
   {
     "vid": "0x239A",
+    "pid": "0x809C",
+    "product": "ST STM32F746G Discovery - CPy",
+    "manufacturer": "STMicroelectronics",
+    "site_path": "stm32f746g_discovery"
+  },
+  {
+    "vid": "0x239A",
     "pid": "0x806A",
     "product": "stm32f411ce blackpill",
     "manufacturer": "Unknown",
@@ -596,6 +610,13 @@
   },
   {
     "vid": "0x239A",
+    "pid": "0x80A4",
+    "product": "OpenMV-H7 R1",
+    "manufacturer": "OpenMV, LLC",
+    "site_path": "openmv_h7"
+  },
+  {
+    "vid": "0x239A",
     "pid": "0x805E",
     "product": "STM32F411VE Discovery Board - CPy",
     "manufacturer": "STMicroelectronics",
@@ -610,10 +631,31 @@
   },
   {
     "vid": "0x239A",
+    "pid": "0x8098",
+    "product": "Nucleo H743ZI - CPy",
+    "manufacturer": "STMicroelectronics",
+    "site_path": "nucleo_h743zi_2"
+  },
+  {
+    "vid": "0x239A",
+    "pid": "0x809A",
+    "product": "Nucleo F767ZI - CPy",
+    "manufacturer": "STMicroelectronics",
+    "site_path": "nucleo_f767zi"
+  },
+  {
+    "vid": "0x239A",
     "pid": "0x805A",
     "product": "Meowbit",
     "manufacturer": "Kittenbot",
     "site_path": "meowbit_v121"
+  },
+  {
+    "vid": "0x239A",
+    "pid": "0x809E",
+    "product": "Nucleo F746zg - CPy",
+    "manufacturer": "STMicroelectronics",
+    "site_path": "nucleo_f746zg"
   },
   {
     "vid": "0x239A",
@@ -754,6 +796,13 @@
     "product": "Arduino_Nano_33_BLE",
     "manufacturer": "Arduino",
     "site_path": "arduino_nano_33_ble"
+  },
+  {
+    "vid": "0x1209",
+    "pid": "0xc051",
+    "product": "Simmel",
+    "manufacturer": "Betrusted",
+    "site_path": "simmel"
   },
   {
     "vid": "0x239A",
