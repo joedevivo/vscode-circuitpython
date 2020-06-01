@@ -189,6 +189,13 @@
     "site_path": "itsybitsy_m0_express"
   },
   {
+    "vid": "0x239A",
+    "pid": "0x80B0",
+    "product": "Fluff M0",
+    "manufacturer": "Radomir Dopieralski",
+    "site_path": "fluff_m0"
+  },
+  {
     "vid": "0x04D8",
     "pid": "0xEE8E",
     "product": "datum-Light",
@@ -257,6 +264,13 @@
     "product": "CircuitPlayground Express with Crickit libraries",
     "manufacturer": "Adafruit Industries LLC",
     "site_path": "circuitplayground_express_crickit"
+  },
+  {
+    "vid": "0x32BD",
+    "pid": "0x3001",
+    "product": "AloriumTech Evo M51",
+    "manufacturer": "Alorium Technology, LLC",
+    "site_path": "aloriumtech_evo_m51"
   },
   {
     "vid": "0x1209",
@@ -404,6 +418,13 @@
     "product": "Datalore IP M4",
     "manufacturer": "TG-Boards",
     "site_path": "datalore_ip_m4"
+  },
+  {
+    "vid": "0x04D8",
+    "pid": "0xEC44",
+    "product": "PyCubed",
+    "manufacturer": "maholli",
+    "site_path": "pycubed_mram"
   },
   {
     "vid": "0x239A",
@@ -694,6 +715,13 @@
   },
   {
     "vid": "0x239A",
+    "pid": "0x80AE",
+    "product": "Teensy 4.1",
+    "manufacturer": "PJRC",
+    "site_path": "teensy41"
+  },
+  {
+    "vid": "0x239A",
     "pid": "0x8086",
     "product": "Teensy 4.0",
     "manufacturer": "PJRC",
@@ -798,11 +826,25 @@
     "site_path": "arduino_nano_33_ble"
   },
   {
+    "vid": "0x1915",
+    "pid": "0xb001",
+    "product": "Pitaya Go",
+    "manufacturer": "Makerdiary",
+    "site_path": "pitaya_go"
+  },
+  {
     "vid": "0x1209",
     "pid": "0xc051",
     "product": "Simmel",
     "manufacturer": "Betrusted",
     "site_path": "simmel"
+  },
+  {
+    "vid": "0x239A",
+    "pid": "0x802A",
+    "product": "PCA10100",
+    "manufacturer": "Nordic Semiconductor",
+    "site_path": "pca10100"
   },
   {
     "vid": "0x239A",
@@ -862,6 +904,13 @@
   },
   {
     "vid": "0x239A",
+    "pid": "0x80B2",
+    "product": "HiiBot BlueFi",
+    "manufacturer": "HiiBot",
+    "site_path": "hiibot_bluefi"
+  },
+  {
+    "vid": "0x239A",
     "pid": "0x802A",
     "product": "PCA10056",
     "manufacturer": "Nordic Semiconductor",
@@ -887,5 +936,19 @@
     "product": "Fomu",
     "manufacturer": "Foosn",
     "site_path": "fomu"
+  },
+  {
+    "vid": "0x239A",
+    "pid": "0x80A8",
+    "product": "Saola 1 w/WROOM",
+    "manufacturer": "Espressif",
+    "site_path": "espressif_saola_1_wroom"
+  },
+  {
+    "vid": "0x239A",
+    "pid": "0x80A6",
+    "product": "Saola 1 w/WROVER",
+    "manufacturer": "Espressif",
+    "site_path": "espressif_saola_1_wrover"
   }
 ]
