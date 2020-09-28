@@ -8,3 +8,4 @@ circuitpython
 .mypy_cache/
 circup*
 .env/
+/bindings

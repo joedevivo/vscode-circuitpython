@@ -1,0 +1,81 @@
+trigger:
+  branches:
+    include:
+    - master
+    - build-pipeline
+  tags:
+    include:
+    - v*
+
+# TODO: Parameterize electon version & abi
+jobs:
+- job: linuxBindings
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '12.14.1'
+    displayName: 'Install Node.js'
+  - task: Npm@1
+    inputs:
+      command: 'install'
+  - bash: |
+    ./scripts/build-bindings.sh @serialport/bindings
+    ./scripts/build-bindings.sh drivelist
+  - publish: $(System.DefaultWorkingDirectory)/bindings
+    artifact: bindings-linux
+- job: macOSBindings
+  pool:
+    vmImage: 'macos-latest'
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '12.14.1'
+    displayName: 'Install Node.js'
+  - task: Npm@1
+    inputs:
+      command: 'install'
+  - bash: |
+    ./scripts/build-bindings.sh @serialport/bindings
+    ./scripts/build-bindings.sh drivelist
+  - publish: $(System.DefaultWorkingDirectory)/bindings
+    artifact: bindings-macos
+- job: windowsBindings
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '12.14.1'
+    displayName: 'Install Node.js'
+  - task: Npm@1
+    inputs:
+      command: 'install'
+  - bash: |
+    ./scripts/build-bindings.cmd @serialport\bindings
+    ./scripts/build-bindings.cmd drivelist
+  - publish: $(System.DefaultWorkingDirectory)\bindings
+    artifact: bindings-windows
+- job: package
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '12.14.1'
+    displayName: 'Install Node.js'
+  - task: Npm@1
+    inputs:
+      command: 'install'
+  - download: current
+    artifact: bindings-linux
+  - download: current
+    artifact: bindings-macos
+  - download: current
+    artifact: bindings-windows
+  - task: Npm@1
+    inputs:
+      command: 'run compile'
+  - bash: |
+    ./scripts/install-bindings.sh    
