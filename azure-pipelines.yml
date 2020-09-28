@@ -20,9 +20,8 @@ jobs:
   - task: Npm@1
     inputs:
       command: 'install'
-  - bash: |
-      ./scripts/build-bindings.sh @serialport/bindings
-      ./scripts/build-bindings.sh drivelist
+  - script: ./scripts/build-bindings.sh @serialport/bindings
+  - script: ./scripts/build-bindings.sh drivelist
   - publish: $(System.DefaultWorkingDirectory)/bindings
     artifact: bindings-linux
 - job: macOSBindings
@@ -36,9 +35,8 @@ jobs:
   - task: Npm@1
     inputs:
       command: 'install'
-  - bash: |
-      ./scripts/build-bindings.sh @serialport/bindings
-      ./scripts/build-bindings.sh drivelist
+  - script: ./scripts/build-bindings.sh @serialport/bindings
+  - script: ./scripts/build-bindings.sh drivelist
   - publish: $(System.DefaultWorkingDirectory)/bindings
     artifact: bindings-macos
 - job: windowsBindings
@@ -76,5 +74,4 @@ jobs:
   - task: Npm@1
     inputs:
       command: 'run compile'
-  - bash: |
-      ./scripts/install-bindings.sh    
+  - script: ./scripts/install-bindings.sh
