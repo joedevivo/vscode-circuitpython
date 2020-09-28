@@ -12,7 +12,7 @@
     "url": "https://github.com/joedevivo/vscode-circuitpython/issues"
   },
   "engines": {
-    "vscode": "^1.42.0"
+    "vscode": "^1.49.0"
   },
   "icon": "images/BlinkaOnDark.png",
   "categories": [
