@@ -8,70 +8,75 @@ trigger:
     - v*
 
 # TODO: Parameterize electon version & abi
-jobs:
-- job: linuxBindings
-  pool:
-    vmImage: 'ubuntu-latest'
-  steps:
-  - task: NodeTool@0
-    inputs:
-      versionSpec: '12.14.1'
-    displayName: 'Install Node.js'
-  - task: Npm@1
-    inputs:
-      command: 'install'
-  - script: ./scripts/build-bindings.sh @serialport/bindings
-  - script: ./scripts/build-bindings.sh drivelist
-  - publish: $(System.DefaultWorkingDirectory)/bindings
-    artifact: bindings-linux
-- job: macOSBindings
-  pool:
-    vmImage: 'macos-latest'
-  steps:
-  - task: NodeTool@0
-    inputs:
-      versionSpec: '12.14.1'
-    displayName: 'Install Node.js'
-  - task: Npm@1
-    inputs:
-      command: 'install'
-  - script: ./scripts/build-bindings.sh @serialport/bindings
-  - script: ./scripts/build-bindings.sh drivelist
-  - publish: $(System.DefaultWorkingDirectory)/bindings
-    artifact: bindings-macos
-- job: windowsBindings
-  pool:
-    vmImage: 'windows-latest'
-  steps:
-  - task: NodeTool@0
-    inputs:
-      versionSpec: '12.14.1'
-    displayName: 'Install Node.js'
-  - task: Npm@1
-    inputs:
-      command: 'install'
-  - script: ./scripts/build-bindings.cmd @serialport\bindings
-  - script: ./scripts/build-bindings.cmd drivelist
-  - publish: $(System.DefaultWorkingDirectory)\bindings
-    artifact: bindings-windows
-- job: package
-  pool:
-    vmImage: 'ubuntu-latest'
-  steps:
-  - task: NodeTool@0
-    inputs:
-      versionSpec: '12.14.1'
-    displayName: 'Install Node.js'
-  - task: Npm@1
-    inputs:
-      command: 'install'
-  - download: current
-    artifact: bindings-linux
-  - download: current
-    artifact: bindings-macos
-  - download: current
-    artifact: bindings-windows
-  - task: Npm@1
-    inputs:
-      command: 'run compile'
-  - script: ./scripts/install-bindings.sh
+stages:
+  - stage: Bindings
+    jobs:
+    - job: linuxBindings
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '12.14.1'
+        displayName: 'Install Node.js'
+      - task: Npm@1
+        inputs:
+          command: 'install'
+      - script: ./scripts/build-bindings.sh @serialport/bindings
+      - script: ./scripts/build-bindings.sh drivelist
+      - publish: $(System.DefaultWorkingDirectory)/bindings
+        artifact: bindings-linux
+    - job: macOSBindings
+      pool:
+        vmImage: 'macos-latest'
+      steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '12.14.1'
+        displayName: 'Install Node.js'
+      - task: Npm@1
+        inputs:
+          command: 'install'
+      - script: ./scripts/build-bindings.sh @serialport/bindings
+      - script: ./scripts/build-bindings.sh drivelist
+      - publish: $(System.DefaultWorkingDirectory)/bindings
+        artifact: bindings-macos
+    - job: windowsBindings
+      pool:
+        vmImage: 'windows-latest'
+      steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '12.14.1'
+        displayName: 'Install Node.js'
+      - task: Npm@1
+        inputs:
+          command: 'install'
+      - script: ./scripts/build-bindings.cmd @serialport\bindings
+      - script: ./scripts/build-bindings.cmd drivelist
+      - publish: $(System.DefaultWorkingDirectory)\bindings
+        artifact: bindings-windows
+  - stage: Package
+    dependsOn: Bindings
+    jobs:
+    - job: package
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '12.14.1'
+        displayName: 'Install Node.js'
+      - task: Npm@1
+        inputs:
+          command: 'install'
+      - download: current
+        artifact: bindings-linux
+      - download: current
+        artifact: bindings-macos
+      - download: current
+        artifact: bindings-windows
+      - task: Npm@1
+        inputs:
+          command: 'run compile'
+      - script: ./scripts/install-bindings.sh
