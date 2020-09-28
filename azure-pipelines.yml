@@ -79,8 +79,9 @@ stages:
       - script: ./scripts/install-bindings.sh
       - publish: $(System.DefaultWorkingDirectory)/node_modules
         artifact: modules-with-bindings
-      - script: ./node_modules/.bin/vsce package
-      - publish: $(System.DefaultWorkingDirectory)/vscode-circuitpython-*.vsix
+      - script: mkdir $(System.DefaultWorkingDirectory)/package
+      - script: ./node_modules/.bin/vsce package -o $(System.DefaultWorkingDirectory)/package
+      - publish: $(System.DefaultWorkingDirectory)/package
         artifact: package
       
   - stage: Deploy
