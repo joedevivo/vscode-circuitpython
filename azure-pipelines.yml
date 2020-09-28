@@ -77,4 +77,4 @@ jobs:
     inputs:
       command: 'run compile'
   - bash: |
-    ./scripts/install-bindings.sh    
+      ./scripts/install-bindings.sh    
