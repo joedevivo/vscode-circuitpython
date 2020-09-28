@@ -55,7 +55,7 @@ stages:
       - script: ./scripts/build-bindings.cmd @serialport\bindings
       - script: ./scripts/build-bindings.cmd drivelist
       - publish: $(System.DefaultWorkingDirectory)\bindings
-        artifact: bindings-windows
+        artifact: bindings-win10
   - stage: Package
     dependsOn: Bindings
     jobs:
@@ -75,12 +75,12 @@ stages:
       - download: current
         artifact: bindings-macos
       - download: current
-        artifact: bindings-windows
+        artifact: bindings-win10
       - script: ./scripts/install-bindings.sh
       - publish: $(System.DefaultWorkingDirectory)/node_modules
         artifact: modules-with-bindings
       - script: mkdir $(System.DefaultWorkingDirectory)/package
-      - script: ./node_modules/.bin/vsce package -o $(System.DefaultWorkingDirectory)/package
+      - script: ./node_modules/.bin/vsce package dev-`echo $(Build.SourceVersion) | cut -c -8` -o $(System.DefaultWorkingDirectory)/package
       - publish: $(System.DefaultWorkingDirectory)/package
         artifact: package
       

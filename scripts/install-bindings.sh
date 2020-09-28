@@ -2,7 +2,6 @@
 
 install() {
   IFS="/" read -ra MOD <<< "$1"
-  #echo "$1 - $2 - ${MOD[-1]}"
   mkdir -p node_modules/$1/lib/binding/$2
   mv build/Release/${MOD[-1]}.node node_modules/$1/lib/binding/$2/${MOD[-1]}.node
 }
@@ -26,7 +25,6 @@ extract() {
   
   path="node-$abi-$platform-$arch"
   install $package $path 
-  
 }
 
 extract_dir() {
@@ -35,23 +33,13 @@ extract_dir() {
   for tarball in *.tar.gz; do
     extract $tarball
   done
-#for tarball in bindings/*; do
-#  echo "Extracting $tarball"
-#  if [ -d $tarball ];
-#  then
-#    extract 
-#  #serialport_pat='bindings/bindings-v(.*)-electron-v([^0-9]+)-([^-]*)-([^-]*).tar.gz'
-#  pat='(bindings)/[^\-]*-v[^\-]*.*.tar.gz' #v(.*)-electron-v([^0-9]+)-([^-]*)-([^-]*).tar.gz'
-#  [[ $tarball =~ $pat ]]
-#done
-
 }
 
 
-files=$(ls -AR bindings | awk '
+files=$(ls -AR bindings* | awk '
 /:$/&&f{s=$0;f=0}
 /:$/&&!f{sub(/:$/,"");s=$0;f=1;next}
-NF&&f{ print s"/"$0 }' | grep tar.gz |  cut -c 10-)\
+NF&&f{ print s"/"$0 }' | grep tar.gz |  cut -c 16-)\
 
 for f in $files; do
   extract $f
