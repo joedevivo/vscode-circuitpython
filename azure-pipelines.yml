@@ -76,8 +76,8 @@ stages:
         artifact: bindings-macos
       - download: current
         artifact: bindings-win10
-      - script: ls -al $(System.DefaultWorkingDirectory)
-      - script: ./scripts/install-bindings.sh $(System.DefaultWorkingDirectory)
+      - script: ls -al ../$(System.DefaultWorkingDirectory)
+      - script: ./scripts/install-bindings.sh ../$(System.DefaultWorkingDirectory)
       - publish: $(System.DefaultWorkingDirectory)/node_modules
         artifact: modules-with-bindings
       - script: mkdir $(System.DefaultWorkingDirectory)/package
