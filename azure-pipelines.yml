@@ -56,6 +56,19 @@ stages:
       - script: ./scripts/build-bindings.cmd drivelist
       - publish: $(System.DefaultWorkingDirectory)\bindings
         artifact: bindings-win10
+    - job: circuitpythonStubs
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.6'
+      - script: ./scripts/build-stubs.sh
+      - publish: $(System.DefaultWorkingDirectory)/stubs
+        artifact: stubs
+      - publish: $(System.DefaultWorkingDirectory)/boards
+        artifact: boards
+
   - stage: Package
     dependsOn: Bindings
     jobs:
@@ -76,12 +89,17 @@ stages:
         artifact: bindings-macos
       - download: current
         artifact: bindings-win10
-      - script: ls -al $(System.DefaultWorkingDirectory)/../
+      - download: current
+        artifact: stubs
+      - download: current
+        artifact: boards
+      - script: mv $(System.DefaultWorkingDirectory)/../boards $(System.DefaultWorkingDirectory)/boards
+      - script: mv $(System.DefaultWorkingDirectory)/../stubs $(System.DefaultWorkingDirectory)/stubs
       - script: ./scripts/install-bindings.sh $(System.DefaultWorkingDirectory)/../
       - publish: $(System.DefaultWorkingDirectory)/node_modules
         artifact: modules-with-bindings
       - script: mkdir $(System.DefaultWorkingDirectory)/package
-      - script: ./node_modules/.bin/vsce package dev-`echo $(Build.SourceVersion) | cut -c -8` -o $(System.DefaultWorkingDirectory)/package
+      - script: ./node_modules/.bin/vsce package -o package/vscode-circuitpython-dev-`echo $(Build.SourceVersion) | cut -c -8`.vsix
       - publish: $(System.DefaultWorkingDirectory)/package
         artifact: package
       

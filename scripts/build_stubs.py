@@ -1,7 +1,6 @@
 import appdirs
 import subprocess
 import os
-import circup
 import mypy
 import pathlib
 import re
