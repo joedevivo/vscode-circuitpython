@@ -36,6 +36,8 @@ extract_dir() {
 }
 
 
+cp -r $1/bindings* .
+
 files=$(ls -AR bindings* | awk '
 /:$/&&f{s=$0;f=0}
 /:$/&&!f{sub(/:$/,"");s=$0;f=1;next}
