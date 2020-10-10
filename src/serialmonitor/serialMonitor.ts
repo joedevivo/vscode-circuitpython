@@ -122,6 +122,8 @@ export class SerialMonitor implements vscode.Disposable {
                 `Failed to open serial port ${this._currentPort} due to error: + ${error.toString()}`);
     }
     this._writeEmitter.fire(`[Open] Connection to ${this._currentPort.serialPort.path}${os.EOL}\r\n`);
+    this._writeEmitter.fire(`press Ctrl-C to enter the REPL${os.EOL}\r\n`);
+    
     this._serialPort.on("data", (_event) => {
       this._writeEmitter.fire(_event.toString());
     });

@@ -11,3 +11,5 @@ circup*
 /bindings*
 /stubs
 /boards
+new.diff
+.DS_Store
