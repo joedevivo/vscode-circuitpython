@@ -102,24 +102,10 @@ stages:
       - script: ./node_modules/.bin/vsce package -o package/vscode-circuitpython-dev-`echo $(Build.SourceVersion) | cut -c -8`.vsix
       - publish: $(System.DefaultWorkingDirectory)/package
         artifact: package
-      
-  - stage: Deploy
-    dependsOn: Package      
-    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['Agent.OS'], 'Linux'))
-    jobs:
-    - job: deploy
-      pool:
-        vmImage: 'ubuntu-latest'
-      steps:
-      - task: NodeTool@0
-        inputs:
-          versionSpec: '12.14.1'
-        displayName: 'Install Node.js'
-      - download: current
-        artifact: modules-with-bindings
       - bash: |
           echo ">>> Publish"
           npm run deploy
         displayName: Publish
+        condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
         env:
           VSCE_PAT: $(VSCE_PAT)
