@@ -1,5 +1,0 @@
-
-"""
-microcontroller.pin
-"""
-
