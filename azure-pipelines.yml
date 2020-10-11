@@ -93,8 +93,8 @@ stages:
         artifact: stubs
       - download: current
         artifact: boards
-      - script: mv $(System.DefaultWorkingDirectory)/../boards $(System.DefaultWorkingDirectory)/boards
-      - script: mv $(System.DefaultWorkingDirectory)/../stubs $(System.DefaultWorkingDirectory)/stubs
+      - script: mv $(System.DefaultWorkingDirectory)/../boards $(System.DefaultWorkingDirectory)
+      - script: mv $(System.DefaultWorkingDirectory)/../stubs $(System.DefaultWorkingDirectory)
       - script: ./scripts/install-bindings.sh $(System.DefaultWorkingDirectory)/../
       - publish: $(System.DefaultWorkingDirectory)/node_modules
         artifact: modules-with-bindings
