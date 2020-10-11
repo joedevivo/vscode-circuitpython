@@ -1,0 +1,111 @@
+trigger:
+  branches:
+    include:
+    - master
+    - build-pipeline
+  tags:
+    include:
+    - refs/tags/v*
+
+# TODO: Parameterize electon version & abi
+stages:
+  - stage: Bindings
+    jobs:
+    - job: linuxBindings
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '12.14.1'
+        displayName: 'Install Node.js'
+      - task: Npm@1
+        inputs:
+          command: 'install'
+      - script: ./scripts/build-bindings.sh @serialport/bindings
+      - script: ./scripts/build-bindings.sh drivelist
+      - publish: $(System.DefaultWorkingDirectory)/bindings
+        artifact: bindings-linux
+    - job: macOSBindings
+      pool:
+        vmImage: 'macos-latest'
+      steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '12.14.1'
+        displayName: 'Install Node.js'
+      - task: Npm@1
+        inputs:
+          command: 'install'
+      - script: ./scripts/build-bindings.sh @serialport/bindings
+      - script: ./scripts/build-bindings.sh drivelist
+      - publish: $(System.DefaultWorkingDirectory)/bindings
+        artifact: bindings-macos
+    - job: windowsBindings
+      pool:
+        vmImage: 'windows-latest'
+      steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '12.14.1'
+        displayName: 'Install Node.js'
+      - task: Npm@1
+        inputs:
+          command: 'install'
+      - script: ./scripts/build-bindings.cmd @serialport\bindings
+      - script: ./scripts/build-bindings.cmd drivelist
+      - publish: $(System.DefaultWorkingDirectory)\bindings
+        artifact: bindings-win10
+    - job: circuitpythonStubs
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.6'
+      - script: ./scripts/build-stubs.sh
+      - publish: $(System.DefaultWorkingDirectory)/stubs
+        artifact: stubs
+      - publish: $(System.DefaultWorkingDirectory)/boards
+        artifact: boards
+
+  - stage: Package
+    dependsOn: Bindings
+    jobs:
+    - job: package
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '12.14.1'
+        displayName: 'Install Node.js'
+      - task: Npm@1
+        inputs:
+          command: 'install'
+      - download: current
+        artifact: bindings-linux
+      - download: current
+        artifact: bindings-macos
+      - download: current
+        artifact: bindings-win10
+      - download: current
+        artifact: stubs
+      - download: current
+        artifact: boards
+      - script: mv $(System.DefaultWorkingDirectory)/../boards $(System.DefaultWorkingDirectory)
+      - script: mv $(System.DefaultWorkingDirectory)/../stubs $(System.DefaultWorkingDirectory)
+      - script: ./scripts/install-bindings.sh $(System.DefaultWorkingDirectory)/../
+      - publish: $(System.DefaultWorkingDirectory)/node_modules
+        artifact: modules-with-bindings
+      - script: mkdir $(System.DefaultWorkingDirectory)/package
+      - script: ./node_modules/.bin/vsce package -o package/vscode-circuitpython-dev-`echo $(Build.SourceVersion) | cut -c -8`.vsix
+      - publish: $(System.DefaultWorkingDirectory)/package
+        artifact: package
+      - bash: |
+          echo ">>> Publish"
+          npm run deploy
+        displayName: Publish
+        condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+        env:
+          VSCE_PAT: $(VSCE_PAT)

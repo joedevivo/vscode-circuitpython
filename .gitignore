@@ -8,5 +8,8 @@ circuitpython
 .mypy_cache/
 circup*
 .env/
+/bindings*
+/stubs
+/boards
 new.diff
 .DS_Store

@@ -1,4 +1,3 @@
-circup
 semver
 appdirs
 mypy

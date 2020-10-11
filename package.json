@@ -2,7 +2,7 @@
   "name": "vscode-circuitpython",
   "displayName": "CircuitPython",
   "description": "CircuitPython for Visual Studio Code",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "publisher": "joedevivo",
   "repository": {
     "type": "git",
@@ -12,7 +12,7 @@
     "url": "https://github.com/joedevivo/vscode-circuitpython/issues"
   },
   "engines": {
-    "vscode": "^1.42.0"
+    "vscode": "^1.49.0"
   },
   "icon": "images/BlinkaOnDark.png",
   "categories": [
@@ -79,19 +79,28 @@
       "title": "Circuit Python",
       "properties": {
         "circuitpython.board.vid": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "default": null,
           "description": "Vendor ID for the current board. Intended to be set at the workspace level.",
           "scope": "window"
         },
         "circuitpython.board.pid": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "default": null,
           "description": "Product ID for the current board. Intended to be set at the workspace level.",
           "scope": "window"
         },
         "circuitpython.board.version": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "default": null,
           "description": "Circuit Python version for the current board. Intended to be set at the workspace level.",
           "scope": "window"
@@ -108,6 +117,7 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
+    "deploy": "vsce publish",
     "compile": "tsc -p ./",
     "lint": "eslint src --ext ts",
     "watch": "tsc -watch -p ./",
@@ -118,39 +128,41 @@
     "ms-python.python"
   ],
   "devDependencies": {
-    "@types/glob": "^7.1.1",
-    "@types/mocha": "^7.0.1",
-    "@types/node": "^12.11.7",
-    "@types/vscode": "^1.42.0",
-    "@typescript-eslint/eslint-plugin": "^2.18.0",
-    "@typescript-eslint/parser": "^2.18.0",
-    "electron": "^7.1.14",
-    "electron-rebuild": "^1.10.1",
+    "@types/glob": "^7.1.3",
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^12.12.62",
+    "@types/vscode": "^1.49.0",
+    "@typescript-eslint/eslint-plugin": "^2.34.0",
+    "@typescript-eslint/parser": "^2.34.0",
+    "electron": "^9.2.1",
+    "electron-rebuild": "^2.0.3",
     "eslint": "^6.8.0",
     "glob": "^7.1.6",
-    "mocha": "^7.0.1",
+    "mocha": "^7.2.0",
+    "node-abi": "^2.19.1",
     "node-gyp": "^6.1.0",
-    "node-pre-gyp": "^0.14.0",
-    "typescript": "^3.7.5",
-    "vsce": "^1.74.0",
-    "vscode-test": "^1.3.0"
+    "node-pre-gyp": "^0.15.0",
+    "prebuild": "^10.0.1",
+    "typescript": "^3.9.7",
+    "vsce": "^1.79.5",
+    "vscode-test": "^1.4.0"
   },
   "dependencies": {
-    "@types/lodash": "^4.14.149",
-    "@types/serialport": "^8.0.0",
+    "@types/lodash": "^4.14.161",
+    "@types/serialport": "^8.0.1",
     "axios": "^0.19.2",
-    "drivelist": "^8.0.10",
+    "drivelist": "^9.1.0",
     "fs-extra": "^8.1.0",
-    "globby": "^11.0.0",
-    "lodash": "^4.17.15",
-    "npm": "^6.14.1",
-    "semver": "^7.1.3",
-    "serialport": "^8.0.7",
-    "shelljs": "^0.8.3",
+    "globby": "^11.0.1",
+    "lodash": "^4.17.20",
+    "npm": "^6.14.8",
+    "semver": "^7.3.2",
+    "serialport": "^9.0.1",
+    "shelljs": "^0.8.4",
     "trash": "^6.1.1",
-    "typed-rest-client": "^1.7.2",
+    "typed-rest-client": "^1.7.3",
     "typescript-http-client": "^0.10.1",
-    "typescript-string-operations": "^1.3.2",
-    "unzipper": "^0.10.10"
+    "typescript-string-operations": "^1.3.3",
+    "unzipper": "^0.10.11"
   }
 }

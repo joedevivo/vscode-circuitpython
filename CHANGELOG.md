@@ -3,6 +3,12 @@
 All notable changes to the "vscode-circuitpython" extension will be documented
 in this file.
 
+## [0.1.3]
+- New Azure Pipelie Build
+  - Should resolve native binding issues
+  - New Boards are added in the build from adafruit/circuitpython:main
+    - TODO: Let the user choose their version of CircuitPython, with the boards supported by that version.
+
 ## [0.1.2]
 - Added `Use Ctrl-C to enter the REPL` on Serial Monitor Connect
 - New Boards
