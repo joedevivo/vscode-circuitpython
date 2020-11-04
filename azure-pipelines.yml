@@ -1,8 +1,7 @@
 trigger:
   branches:
     include:
-    - master
-    - build-pipeline
+    - ref/heads/*
   tags:
     include:
     - refs/tags/v*
