@@ -10,3 +10,4 @@ mv circuitpython-stubs ../stubs
 cd ..
 pip3 install -r requirements.txt
 python3 ./scripts/build_stubs.py
+rm -rf stubs/board

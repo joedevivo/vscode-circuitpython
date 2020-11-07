@@ -3,6 +3,9 @@
 All notable changes to the "vscode-circuitpython" extension will be documented
 in this file.
 
+## [0.1.4]
+- Improved logic for generating board stubs
+
 ## [0.1.3]
 - New Azure Pipelie Build
   - Should resolve native binding issues
