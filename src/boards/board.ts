@@ -3,6 +3,13 @@ import * as fs from 'fs';
 import { stringify } from "querystring";
 import { normalize } from "path";
 
+class BoardData {
+  public vid: string;
+  public pid: string;
+  public product: string;
+  public manufacturer: string;
+}
+
 export class Board implements QuickPickItem {
   public vid: string;
   public pid: string;
@@ -11,7 +18,7 @@ export class Board implements QuickPickItem {
   public label: string;
   public description: string = "";
 
-  public constructor(m: Map<string, string>) {
+  public constructor(m: BoardData) {
     this.vid = m["vid"];
     this.pid = m["pid"];
     this.product = m["product"];
@@ -25,7 +32,7 @@ export class Board implements QuickPickItem {
       Board._boards = new Map<string, Board>();
     }
     let jsonData: Buffer = fs.readFileSync(metadataFile);
-    let boardMetadata: Array<Map<string, string>> = JSON.parse(jsonData.toString());
+    let boardMetadata: Array<BoardData> = JSON.parse(jsonData.toString());
     boardMetadata.forEach(b => {
       Board._boards.set(Board.key(b["vid"], b["pid"]), new Board(b));
     });
@@ -35,11 +42,22 @@ export class Board implements QuickPickItem {
     return Array.from(Board._boards.values());
   }
   public static lookup(vid: string, pid: string): Board {
+    vid = Board._normalizeHex(vid);
+    pid = Board._normalizeHex(pid);
     let key: string = Board.key(vid, pid);
-    return Board._boards.get(key);
+    let found: Board = Board._boards.get(key);
+    if (found) {
+      return found;
+    }
+    return new Board({
+      vid: vid,
+      pid: pid,
+      manufacturer: Board._normalizeHex(vid),
+      product: Board._normalizeHex(pid)
+    });
   }
   public static key(vid: string, pid: string): string {
-    return Board._normalizeHex(vid) + ":" + Board._normalizeHex(pid);
+    return `${vid}:${pid}`;
   }
   private static _normalizeHex(hex: string): string {
     let n: string = hex;
