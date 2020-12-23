@@ -3,6 +3,9 @@
 All notable changes to the "vscode-circuitpython" extension will be documented
 in this file.
 
+## [0.1.5]
+- Fixed issue installing 6.x mpy stubs on computers that had previous versions
+
 ## [0.1.4]
 - Improved logic for generating board stubs
 

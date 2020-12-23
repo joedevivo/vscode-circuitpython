@@ -304,7 +304,10 @@ export class LibraryManager implements vscode.Disposable {
       }
       suffixes.push(b.match(suffixRegExp)[1]);
     });
-    LibraryManager.BUNDLE_SUFFIXES = suffixes;
+    // TODO: Should not overwrite BUNDLE_SUFFIXES, better to get the suffixes
+    // from the GitHub API
+    
+    //LibraryManager.BUNDLE_SUFFIXES = suffixes;
     this.localBundleDir = localBundleDir;
 
     // We're done. New bundle in $tag, so let's delete the ones that aren't
@@ -347,7 +350,7 @@ export class LibraryManager implements vscode.Disposable {
   }
 
   /*
-  Downloads 4.x, 5.x and source bundles. Source are crucial for autocomplete
+  Downloads 5.x, 6.x. and source bundles. Source are crucial for autocomplete
   */
   private async getBundle(tag: string) {
     let urlRoot: string = LibraryManager.BUNDLE_URL + '/releases/download/{0}/adafruit-circuitpython-bundle-{1}-{0}.zip';
