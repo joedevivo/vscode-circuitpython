@@ -1,6 +1,6 @@
 echo off
 mkdir -p bindings
-SET electron="10.0.0" "9.0.0" "8.0.0" "7.0.0" "6.0.0"
+SET electron="11.0.0" "10.0.0" "9.0.0" 
 Rem    ./scripts/build-bindings.sh $(System.DefaultWorkingDirectory)
 Rem where I want bindings to end up:
 Rem $(System.DefaultWorkingDirectory)/node_modules/$(module)/lib/binding/node-v$(abi)-$(platform)-$(arch)/bindings.node

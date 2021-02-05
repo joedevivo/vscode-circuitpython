@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Electon Versions
-declare -a electron=( "10.0.0" "9.0.0" "8.0.0" "7.0.0" )
+declare -a electron=( "11.0.0" "10.0.0" "9.0.0" )
 
 working=$(pwd)
 mkdir -p $working/bindings
