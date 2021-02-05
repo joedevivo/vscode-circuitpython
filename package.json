@@ -2,7 +2,7 @@
   "name": "vscode-circuitpython",
   "displayName": "CircuitPython",
   "description": "CircuitPython for Visual Studio Code",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "publisher": "joedevivo",
   "repository": {
     "type": "git",
@@ -12,7 +12,7 @@
     "url": "https://github.com/joedevivo/vscode-circuitpython/issues"
   },
   "engines": {
-    "vscode": "^1.52.0"
+    "vscode": "^1.53.0"
   },
   "icon": "images/BlinkaOnDark.png",
   "categories": [
@@ -134,7 +134,7 @@
     "@types/vscode": "^1.52.0",
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",
-    "electron": "^9.4.1",
+    "electron": "^11.2.1",
     "electron-rebuild": "^2.3.4",
     "eslint": "^6.8.0",
     "glob": "^7.1.6",

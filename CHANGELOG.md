@@ -3,6 +3,11 @@
 All notable changes to the "vscode-circuitpython" extension will be documented
 in this file.
 
+## [0.1.7]
+- Upgraded Electron to 11.2.1
+- Updated VSCode version requirement to 1.53.0
+- Feb 2021 board refresh
+
 ## [0.1.6]
 - Jan 2021 board refresh
 
