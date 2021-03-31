@@ -51,7 +51,7 @@ export class Container implements vscode.Disposable {
   }
 
   private async initialize() {
-    this._libraryManager.initialize();
+    await this._libraryManager.initialize();
     this.registerCommand('library.show', () => this._libraryManager.show());
     this.registerCommand('library.list', () => this._libraryManager.list());
     this.registerCommand('library.update', () => this._libraryManager.update());
@@ -101,5 +101,9 @@ export class Container implements vscode.Disposable {
 
   public static getBundlePath(): string {
     return Container._instance._libraryManager.bundlePath(Container.getMpySuffix());
+  }
+
+  public static async loadBundleMetadata(): Promise<boolean> {
+    return await Container._instance._libraryManager.loadBundleMetadata();
   }
 }

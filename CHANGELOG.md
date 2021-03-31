@@ -3,6 +3,13 @@
 All notable changes to the "vscode-circuitpython" extension will be documented
 in this file.
 
+## [0.1.9]
+- Library management fix [#37](https://github.com/joedevivo/vscode-circuitpython/pull/37)
+  - thanks @makermelissa!
+- Fixes edge case where extension crashes if bundle was never loaded
+- Updated boards for March 2021
+- Update dependencies
+
 ## [0.1.8]
 - all the fun of 0.1.7, but built with proper bindings
 

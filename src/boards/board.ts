@@ -29,7 +29,6 @@ export class Board implements QuickPickItem {
     boardMetadata.forEach(b => {
       Board._boards.set(Board.key(b["vid"], b["pid"]), new Board(b));
     });
-    console.log(Board._boards);
   }
   public static getBoardChoices(): Array<Board> {
     return Array.from(Board._boards.values());

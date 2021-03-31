@@ -112,14 +112,13 @@ export class LibraryManager implements vscode.Disposable {
 
   public constructor(p: string) {
     this.setStorageRoot(p);
-    this.initialize();
   }
 
   public async initialize() {
     // Get the latest Adafruit_CircuitPython_Bundle
     await this.updateBundle();
     // Store the library metadata in memory
-    this.libraries = await this.loadBundleMetadata();
+    await this.loadBundleMetadata();
 
     // Figure out where the project is keeping libraries.
     this.projectLibDir = this.getProjectLibDir();
@@ -253,7 +252,6 @@ export class LibraryManager implements vscode.Disposable {
       this.getProjectRoot(),
       "lib"
     );
-    console.log(l);
     if (libDir === null && fs.existsSync(l)) {
       libDir = l;
     }
@@ -273,12 +271,14 @@ export class LibraryManager implements vscode.Disposable {
 
   public async updateBundle() {
     let tag: string = await this.getLatestBundleTag();
+    let localBundleDir: string = path.join(this.bundleDir, tag);
     if (tag === this.tag) {
       vscode.window.showInformationMessage(`Bundle already at latest version: ${tag}`);
     } else {
       vscode.window.showInformationMessage(`Downloading new bundle: ${tag}`);
       await this.getBundle(tag);
       this.tag = tag;
+      this.localBundleDir = localBundleDir;
       vscode.window.showInformationMessage(`Bundle updated to ${tag}`);
     }
     this.verifyBundle(tag);
@@ -334,7 +334,6 @@ export class LibraryManager implements vscode.Disposable {
       .sort()
       .reverse()
       .shift();
-    console.log(tag);
     return(tag);
   }
   /*
@@ -354,12 +353,21 @@ export class LibraryManager implements vscode.Disposable {
   */
   private async getBundle(tag: string) {
     let urlRoot: string = LibraryManager.BUNDLE_URL + '/releases/download/{0}/adafruit-circuitpython-bundle-{1}-{0}.zip';
-
-    LibraryManager.BUNDLE_SUFFIXES.forEach(async s => {
-      let url: string = String.Format(urlRoot, tag, s);
-      let r: axios.AxiosResponse = await axios.default.get(url, {responseType: 'stream'});
-      await r.data.pipe(unzip.Extract({ path: path.join(this.storageRootDir, "bundle", this.tag) }));
-    });
+    this.tag = tag;
+    for await (const suffix of LibraryManager.BUNDLE_SUFFIXES) {
+      let url: string = String.Format(urlRoot, tag, suffix);
+      let p: string = path.join(this.storageRootDir, "bundle", tag);
+      
+      await axios.default.get(url, {responseType: 'stream'}).then((response) => {
+        response.data.pipe(
+          unzip.Extract({path: p})
+        ).on('close', (entry) => {
+          if(suffix === 'py') {
+            Container.loadBundleMetadata();
+          };
+        });
+      });
+    };
   }
 
   public static getMpy(name: string): string {
@@ -380,8 +388,10 @@ export class LibraryManager implements vscode.Disposable {
     );
   }
 
-  private async loadBundleMetadata(): Promise<Map<string, Library>> {
-    return this.loadLibraryMetadata(this.bundlePath("py"));
+  public async loadBundleMetadata(): Promise<boolean> {
+    let bundlePath = this.bundlePath("py");
+    this.libraries = await this.loadLibraryMetadata(bundlePath);
+    return true;
   }
 
   private async loadLibraryMetadata(rootDir: string): Promise<Map<string, Library>> {
@@ -395,7 +405,6 @@ export class LibraryManager implements vscode.Disposable {
 
     return new Promise<Map<string, Library>>(async (resolve, reject) => {
       let libs: Array<Library> = await Promise.all(libraries).catch((error) => {
-        console.log(error);
         return new Array<Library>();
       });
 

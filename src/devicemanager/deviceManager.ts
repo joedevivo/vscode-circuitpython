@@ -22,7 +22,6 @@ export class DeviceManager implements vscode.Disposable {
       DeviceManager._instance = new DeviceManager();
     }
     let d: drivelist.Drive[] = await DeviceManager._instance.findDevice();
-    console.log(d);
     return DeviceManager._instance;
   }
   private static _instance: DeviceManager = null;
@@ -34,7 +33,6 @@ export class DeviceManager implements vscode.Disposable {
       await drivelist.list().then(
         (drives) => drives.filter((v,i,a) => v.isUSB)
       );
-    console.log(usbDevices);
     /*
     Here's fields from the Drive instance that will help
     drive.mountpoints.shift().label == "CIRCUITPY"
@@ -51,7 +49,6 @@ export class DeviceManager implements vscode.Disposable {
     */
     let serialPorts: serialport.PortInfo[] =
         await serialport.list();
-    console.log(serialPorts);
     /*
     PortInfo
 

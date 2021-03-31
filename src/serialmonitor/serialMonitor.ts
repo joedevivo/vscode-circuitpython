@@ -74,7 +74,6 @@ export class SerialMonitor implements vscode.Disposable {
   // vid/pid needed for usb monitoring, which we're not doing... yet?
   public async selectSerialPort(vid: string, pid: string) {
     const lists = await serialport.list();
-    console.log(lists);
     // vid & pid available in SerialPort as vendorId & productId
     if (!lists.length) {
       vscode.window.showInformationMessage("No serial port is available.");
