@@ -75,7 +75,7 @@ export class LibraryManager implements vscode.Disposable {
   public static BUNDLE_URL: string = "https://github.com/adafruit/Adafruit_CircuitPython_Bundle";
 
   public static BUNDLE_SUFFIXES: string[] = [
-    'py', '5.x-mpy', '6.x-mpy'
+    'py', '6.x-mpy'
   ];
   public static BUNDLE_VERSION_REGEX: RegExp = /\d\d\d\d\d\d\d\d/; 
   // storageRootDir is passed in from the extension BoardManager as
@@ -350,7 +350,7 @@ export class LibraryManager implements vscode.Disposable {
   }
 
   /*
-  Downloads 5.x, 6.x. and source bundles. Source are crucial for autocomplete
+  Downloads 6.x. and source bundles. Source are crucial for autocomplete
   */
   private async getBundle(tag: string) {
     let urlRoot: string = LibraryManager.BUNDLE_URL + '/releases/download/{0}/adafruit-circuitpython-bundle-{1}-{0}.zip';
