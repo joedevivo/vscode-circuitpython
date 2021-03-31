@@ -114,9 +114,18 @@ export class Library implements vscode.QuickPickItem {
     let mpy: boolean = false;
     let modules: Promise<Library>[] = null;
     let files: string[] = fs.readdirSync(dir);
+    let deepFiles: string[] = [];
+    files.forEach((file: string) => {
+        deepFiles = []
+        if (fs.lstatSync(path.join(dir, file)).isDirectory()) {
+            deepFiles = deepFiles.concat(fs.readdirSync(path.join(dir, file)));
+            deepFiles = deepFiles.map((v, i, a) => path.join(file, v));
+        }
+        files = files.concat(deepFiles);
+    });
     let mpyfiles: string[] = _.filter(files, (f) => path.extname(f) === ".mpy");
     let pyfiles: string[] = _.filter(files, (f) => path.extname(f) === ".py");
-  
+    
     // Check mpy first, since sometimes mpy folders have an __init__.py, but py
     // directories never have mpy files
     if (mpyfiles.length > 0) {
@@ -137,7 +146,7 @@ export class Library implements vscode.QuickPickItem {
       potentials = potentials.filter((v, i, a) => {
         return(v.version !== null && v.version !== "");
       });
-      
+
       let l: Library = _.find(potentials, (v) => v.repo !== null);
       if(l === undefined) {
         l = potentials.shift();
