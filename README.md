@@ -7,6 +7,29 @@ Inspired by [Scott Hanselman's blog
 post](https://www.hanselman.com/blog/UsingVisualStudioCodeToProgramCircuitPythonWithAnAdaFruitNeoTrellisM4.aspx)
 and the [VSCode Arduino extension](https://github.com/Microsoft/vscode-arduino).
 
+## Getting Started
+
+The extension will currently activate when any of the following occur:
+
+* workspace contains
+  * `/code.py`
+  * `/code.txt`
+  * `/main.py`
+  * `/main.txt`
+  * `/boot_out.txt`
+* command run
+  * `circuitpython.openSerialMonitor`
+  * `circuitpython.selectSerialPort`
+  * `circuitpython.closeSerialMonitor`
+
+Upon activation, the extension will check for the latest
+[Adafruit_CircuitPython_Bundle](https://github.com/adafruit/Adafruit_CircuitPython_Bundle)
+and download it if needed. It'll then load that library metadata into the
+workspace's state. You can also trigger this manually with `CircuitPython: Check
+for latest bundle`.
+
+After that you should be ready to use the following features.
+
 ## Features
 
 ### Library Management
@@ -66,16 +89,6 @@ library and all py source files in the adafruit bundle to your completion path.
 ### Demo
 
 ![Demo](images/circuitpy-demo.gif)
-
-## TODO / Future Work
-
-* Refactor as I learn more about VSCode Extensions & Typescript
-  [#11](joedevivo/vscode-circuitpython#11)
-* Automate the platform specific binding stuff [#8](joedevivo/vscode-circuitpython#8)
-* Share library state in globalState, only managing it once per all
-  vscode workspaces [#6](joedevivo/vscode-circuitpython#6)
-* Quick open Adafruit Bundle examples [#10](joedevivo/vscode-circuitpython#10)
-* Quick open readthedocs.io for a library [#9](joedevivo/vscode-circuitpython#9)
 
 ## Requirements
 

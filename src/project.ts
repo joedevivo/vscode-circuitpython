@@ -20,7 +20,7 @@ export class Project implements vscode.Disposable {
   public constructor(context: vscode.ExtensionContext) {
     this._context = context;
 
-    let autoConf: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration("python.autoComplete");
+    let autoConf: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration("python.analysis");
     let paths: string[] = autoConf.get("extraPaths");
 
     // Load paths from last session
@@ -91,7 +91,7 @@ export class Project implements vscode.Disposable {
       this._autoCompleteBundle
     ].concat(this._autoCompleteExtra);
     vscode.workspace.getConfiguration().update(
-      "python.autoComplete.extraPaths", 
+      "python.analysis.extraPaths", 
        paths
     );
   }

@@ -3,6 +3,12 @@
 All notable changes to the "vscode-circuitpython" extension will be documented
 in this file.
 
+## [0.1.10]
+- Disable pylint by default
+- Opt in to pylance by default
+- Added link to [GitHub Discussions](https://github.com/joedevivo/vscode-circuitpython/discussions) for Q&A.
+
+
 ## [0.1.9]
 - Library management fix [#37](https://github.com/joedevivo/vscode-circuitpython/pull/37)
   - thanks @makermelissa!

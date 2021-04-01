@@ -2,9 +2,10 @@
   "name": "vscode-circuitpython",
   "displayName": "CircuitPython",
   "description": "CircuitPython for Visual Studio Code",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "publisher": "joedevivo",
   "license": "MIT",
+  "qna": "https://github.com/joedevivo/vscode-circuitpython/discussions",
   "repository": {
     "type": "git",
     "url": "https://github.com/joedevivo/vscode-circuitpython.git"
@@ -13,7 +14,7 @@
     "url": "https://github.com/joedevivo/vscode-circuitpython/issues"
   },
   "engines": {
-    "vscode": "^1.53.0"
+    "vscode": "^1.55.0"
   },
   "icon": "images/BlinkaOnDark.png",
   "categories": [
@@ -23,10 +24,14 @@
     "iot",
     "adafruit",
     "circuitpython",
-    "blinka"
+    "blinka",
+    "python"
   ],
   "activationEvents": [
     "workspaceContains:/code.py",
+    "workspaceContains:/code.txt",
+    "workspaceContains:/main.py",
+    "workspaceContains:/main.txt",
     "workspaceContains:/boot_out.txt",
     "onCommand:circuitpython.openSerialMonitor",
     "onCommand:circuitpython.selectSerialPort",
@@ -126,7 +131,8 @@
     "test": "node ./out/test/runTest.js"
   },
   "extensionDependencies": [
-    "ms-python.python"
+    "ms-python.python",
+    "ms-python.vscode-pylance"
   ],
   "devDependencies": {
     "@types/glob": "^7.1.3",

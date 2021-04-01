@@ -13,3 +13,7 @@ circup*
 /boards
 new.diff
 .DS_Store
+/tmp
+.history
+build
+*.tar.gz
