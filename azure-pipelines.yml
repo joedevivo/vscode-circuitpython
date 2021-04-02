@@ -25,7 +25,22 @@ stages:
       - script: ./scripts/build-bindings.sh drivelist
       - publish: $(System.DefaultWorkingDirectory)/bindings
         artifact: bindings-linux
-    - job: macOSBindings
+    - job: macOSBindings_arm64
+      pool:
+        name: Default
+        demands: 
+          - agent.os -equals Darwin
+          - ARCH -equals arm64
+      steps:
+      # node built for m1 already on the box
+      - task: Npm@1
+        inputs:
+          command: 'install'
+      - script: ./scripts/build-bindings.sh @serialport/bindings
+      - script: ./scripts/build-bindings.sh drivelist
+      - publish: $(System.DefaultWorkingDirectory)/bindings
+        artifact: bindings-macos-arm64
+    - job: macOSBindings_x86_64
       pool:
         vmImage: 'macos-latest'
       steps:
@@ -39,7 +54,7 @@ stages:
       - script: ./scripts/build-bindings.sh @serialport/bindings
       - script: ./scripts/build-bindings.sh drivelist
       - publish: $(System.DefaultWorkingDirectory)/bindings
-        artifact: bindings-macos
+        artifact: bindings-macos-x86_64
     - job: windowsBindings
       pool:
         vmImage: 'windows-latest'
@@ -85,7 +100,9 @@ stages:
       - download: current
         artifact: bindings-linux
       - download: current
-        artifact: bindings-macos
+        artifact: bindings-macos-x86_64
+      - download: current
+        artifact: bindings-macos-arm64
       - download: current
         artifact: bindings-win10
       - download: current
