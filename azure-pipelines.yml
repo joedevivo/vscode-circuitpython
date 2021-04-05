@@ -21,8 +21,9 @@ stages:
       - task: Npm@1
         inputs:
           command: 'install'
-      - script: ./scripts/build-bindings.sh @serialport/bindings
-      - script: ./scripts/build-bindings.sh drivelist
+      - task: Npm@1
+        inputs:
+          command: 'build-bindings'
       - publish: $(System.DefaultWorkingDirectory)/bindings
         artifact: bindings-linux
     - job: macOSBindings_arm64
@@ -36,8 +37,9 @@ stages:
       - task: Npm@1
         inputs:
           command: 'install'
-      - script: ./scripts/build-bindings.sh @serialport/bindings
-      - script: ./scripts/build-bindings.sh drivelist
+      - task: Npm@1
+        inputs:
+          command: 'build-bindings'
       - publish: $(System.DefaultWorkingDirectory)/bindings
         artifact: bindings-macos-arm64
     - job: macOSBindings_x86_64
@@ -51,8 +53,9 @@ stages:
       - task: Npm@1
         inputs:
           command: 'install'
-      - script: ./scripts/build-bindings.sh @serialport/bindings
-      - script: ./scripts/build-bindings.sh drivelist
+      - task: Npm@1
+        inputs:
+          command: 'build-bindings'
       - publish: $(System.DefaultWorkingDirectory)/bindings
         artifact: bindings-macos-x86_64
     - job: windowsBindings
@@ -66,8 +69,9 @@ stages:
       - task: Npm@1
         inputs:
           command: 'install'
-      - script: ./scripts/build-bindings.cmd @serialport\bindings
-      - script: ./scripts/build-bindings.cmd drivelist
+      - task: Npm@1
+        inputs:
+          command: 'build-bindings'
       - publish: $(System.DefaultWorkingDirectory)\bindings
         artifact: bindings-win10
     - job: circuitpythonStubs
@@ -111,7 +115,9 @@ stages:
         artifact: boards
       - script: mv $(System.DefaultWorkingDirectory)/../boards $(System.DefaultWorkingDirectory)
       - script: mv $(System.DefaultWorkingDirectory)/../stubs $(System.DefaultWorkingDirectory)
-      - script: ./scripts/install-bindings.sh $(System.DefaultWorkingDirectory)/../
+      - task: Npm@1
+        inputs:
+          command: 'install-bindings'
       - publish: $(System.DefaultWorkingDirectory)/node_modules
         artifact: modules-with-bindings
       - script: mkdir $(System.DefaultWorkingDirectory)/package
