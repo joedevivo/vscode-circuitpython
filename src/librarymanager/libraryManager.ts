@@ -127,9 +127,11 @@ export class LibraryManager implements vscode.Disposable {
     this.workspaceLibraries = await this.loadLibraryMetadata(this.projectLibDir);
 
     this.cpVersion = this.getProjectCPVer();
-    let v: string[] = this.cpVersion.split(".");
-    if(LibraryManager.BUNDLE_SUFFIXES.includes(`${v[0]}.x-mpy`)) {
-      this.mpySuffix = `${v[0]}.x-mpy`;
+    if(this.cpVersion){
+      let v: string[] = this.cpVersion.split(".");
+      if(LibraryManager.BUNDLE_SUFFIXES.includes(`${v[0]}.x-mpy`)) {
+        this.mpySuffix = `${v[0]}.x-mpy`;
+      }
     }
   }
 
@@ -210,6 +212,9 @@ export class LibraryManager implements vscode.Disposable {
         }
       }
     });
+    if(!root) {
+      root = vscode.workspace.workspaceFolders[0].uri.fsPath;
+    }
     return root;
   }
   // Find it boot_out, so put boot_out.txt in your project root if you want this.
