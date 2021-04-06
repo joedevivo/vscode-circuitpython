@@ -21,11 +21,38 @@ stages:
       - task: Npm@1
         inputs:
           command: 'install'
-      - script: ./scripts/build-bindings.sh @serialport/bindings
-      - script: ./scripts/build-bindings.sh drivelist
+      - task: Npm@1
+        inputs:
+          command: 'custom'
+          customCommand: 'run electron-rebuild'
+      - task: Npm@1
+        inputs:
+          command: 'custom'
+          customCommand: 'run build-bindings'
       - publish: $(System.DefaultWorkingDirectory)/bindings
         artifact: bindings-linux
-    - job: macOSBindings
+    - job: macOSBindings_arm64
+      pool:
+        name: Default
+        demands: 
+          - agent.os -equals Darwin
+          - ARCH -equals arm64
+      steps:
+      # node built for m1 already on the box
+      - task: Npm@1
+        inputs:
+          command: 'install'
+      - task: Npm@1
+        inputs:
+          command: 'custom'
+          customCommand: 'run electron-rebuild'
+      - task: Npm@1
+        inputs:
+          command: 'custom'
+          customCommand: 'run build-bindings'
+      - publish: $(System.DefaultWorkingDirectory)/bindings
+        artifact: bindings-macos-arm64
+    - job: macOSBindings_x86_64
       pool:
         vmImage: 'macos-latest'
       steps:
@@ -36,10 +63,16 @@ stages:
       - task: Npm@1
         inputs:
           command: 'install'
-      - script: ./scripts/build-bindings.sh @serialport/bindings
-      - script: ./scripts/build-bindings.sh drivelist
+      - task: Npm@1
+        inputs:
+          command: 'custom'
+          customCommand: 'run electron-rebuild'
+      - task: Npm@1
+        inputs:
+          command: 'custom'
+          customCommand: 'run build-bindings'
       - publish: $(System.DefaultWorkingDirectory)/bindings
-        artifact: bindings-macos
+        artifact: bindings-macos-x86_64
     - job: windowsBindings
       pool:
         vmImage: 'windows-latest'
@@ -51,8 +84,14 @@ stages:
       - task: Npm@1
         inputs:
           command: 'install'
-      - script: ./scripts/build-bindings.cmd @serialport\bindings
-      - script: ./scripts/build-bindings.cmd drivelist
+      - task: Npm@1
+        inputs:
+          command: 'custom'
+          customCommand: 'run electron-rebuild'
+      - task: Npm@1
+        inputs:
+          command: 'custom'
+          customCommand: 'run build-bindings'
       - publish: $(System.DefaultWorkingDirectory)\bindings
         artifact: bindings-win10
     - job: circuitpythonStubs
@@ -71,9 +110,13 @@ stages:
   - stage: Package
     dependsOn: Bindings
     jobs:
-    - job: package
+    - job: package 
       pool:
-        vmImage: 'ubuntu-latest'
+        name: Default
+        demands: 
+          - agent.os -equals Darwin
+          - ARCH -equals arm64
+        #vmImage: 'ubuntu-latest'
       steps:
       - task: NodeTool@0
         inputs:
@@ -85,16 +128,25 @@ stages:
       - download: current
         artifact: bindings-linux
       - download: current
-        artifact: bindings-macos
+        artifact: bindings-macos-x86_64
+      - download: current
+        artifact: bindings-macos-arm64
       - download: current
         artifact: bindings-win10
+      - task: Npm@1
+        inputs:
+          command: 'custom'
+          customCommand: 'run install-bindings'
       - download: current
         artifact: stubs
       - download: current
         artifact: boards
       - script: mv $(System.DefaultWorkingDirectory)/../boards $(System.DefaultWorkingDirectory)
       - script: mv $(System.DefaultWorkingDirectory)/../stubs $(System.DefaultWorkingDirectory)
-      - script: ./scripts/install-bindings.sh $(System.DefaultWorkingDirectory)/../
+      - task: Npm@1
+        inputs:
+          command: 'custom'
+          customCommand: 'run install-bindings'
       - publish: $(System.DefaultWorkingDirectory)/node_modules
         artifact: modules-with-bindings
       - script: mkdir $(System.DefaultWorkingDirectory)/package
