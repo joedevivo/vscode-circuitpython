@@ -129,6 +129,7 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "test": "node ./out/test/runTest.js",
+    "electron-rebuild": "electron-rebuild -v 11.3.0",
     "build-bindings": "node ./scripts/build-bindings.js",
     "install-bindings": "node ./scripts/install-bindings.js"
   },
