@@ -137,7 +137,8 @@ stages:
       - script: mv $(System.DefaultWorkingDirectory)/../stubs $(System.DefaultWorkingDirectory)
       - task: Npm@1
         inputs:
-          command: 'install-bindings'
+          command: 'custom'
+          customCommand: 'run install-bindings'
       - publish: $(System.DefaultWorkingDirectory)/node_modules
         artifact: modules-with-bindings
       - script: mkdir $(System.DefaultWorkingDirectory)/package
