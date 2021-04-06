@@ -3,6 +3,12 @@
 All notable changes to the "vscode-circuitpython" extension will be documented
 in this file.
 
+## [0.1.11]
+- Fixed [#38](https://github.com/joedevivo/vscode-circuitpython/pull/37)
+  issue with Apple Silicon native bindings
+- Fixed [#42](https://github.com/joedevivo/vscode-circuitpython/pull/42) & [#44](https://github.com/joedevivo/vscode-circuitpython/pull/44)  
+  `boot_out.txt` was required. Still is to determine CircuitPython version, but we can live without that.
+  
 ## [0.1.10]
 - Disable pylint by default
 - Opt in to pylance by default
