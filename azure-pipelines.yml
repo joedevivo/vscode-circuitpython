@@ -123,12 +123,32 @@ stages:
           command: 'install'
       - download: current
         artifact: bindings-linux
+        path: $(Pipeline.Workspace)/bindings
+      - task: Npm@1
+        inputs:
+          command: 'custom'
+          customCommand: 'run install-bindings'
       - download: current
         artifact: bindings-macos-x86_64
+        path: $(Pipeline.Workspace)/bindings
+      - task: Npm@1
+        inputs:
+          command: 'custom'
+          customCommand: 'run install-bindings'
       - download: current
         artifact: bindings-macos-arm64
+        path: $(Pipeline.Workspace)/bindings
+      - task: Npm@1
+        inputs:
+          command: 'custom'
+          customCommand: 'run install-bindings'
       - download: current
         artifact: bindings-win10
+        path: $(Pipeline.Workspace)/bindings
+      - task: Npm@1
+        inputs:
+          command: 'custom'
+          customCommand: 'run install-bindings'
       - download: current
         artifact: stubs
       - download: current
