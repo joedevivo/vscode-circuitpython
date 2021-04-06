@@ -87,11 +87,11 @@ stages:
       - task: Npm@1
         inputs:
           command: 'custom'
-          customCommand: 'electron-rebuild'
+          customCommand: 'run electron-rebuild'
       - task: Npm@1
         inputs:
           command: 'custom'
-          customCommand: 'build-bindings'
+          customCommand: 'run build-bindings'
       - publish: $(System.DefaultWorkingDirectory)\bindings
         artifact: bindings-win10
     - job: circuitpythonStubs
