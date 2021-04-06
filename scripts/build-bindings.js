@@ -2,7 +2,7 @@
 const nodeAbi = require('node-abi');
 const globby = require('globby');
 var abi = nodeAbi.getAbi('11.3.0', 'electron');
-var dir = `node-${abi}-${process.platform}-${process.arch}`;
+var dir = `node-v${abi}-${process.platform}-${process.arch}`;
 console.log(`Building bindings for ${dir}`);
 var fs = require('fs');
 let re = new RegExp('node_modules/(.*)/build/Release/(.*).node', '');

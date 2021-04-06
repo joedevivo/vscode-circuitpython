@@ -110,9 +110,13 @@ stages:
   - stage: Package
     dependsOn: Bindings
     jobs:
-    - job: package
+    - job: package 
       pool:
-        vmImage: 'ubuntu-latest'
+        name: Default
+        demands: 
+          - agent.os -equals Darwin
+          - ARCH -equals arm64
+        #vmImage: 'ubuntu-latest'
       steps:
       - task: NodeTool@0
         inputs:
