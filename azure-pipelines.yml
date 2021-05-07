@@ -16,7 +16,7 @@ stages:
       steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: '12.18.3'
+          versionSpec: '14.16.0'
         displayName: 'Install Node.js'
       - task: Npm@1
         inputs:
@@ -58,7 +58,7 @@ stages:
       steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: '12.18.3'
+          versionSpec: '14.16.0'
         displayName: 'Install Node.js'
       - task: Npm@1
         inputs:
@@ -79,7 +79,7 @@ stages:
       steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: '12.18.3'
+          versionSpec: '14.16.0'
         displayName: 'Install Node.js'
       - task: Npm@1
         inputs:
@@ -112,15 +112,15 @@ stages:
     jobs:
     - job: package 
       pool:
-        name: Default
-        demands: 
-          - agent.os -equals Darwin
-          - ARCH -equals arm64
-        #vmImage: 'ubuntu-latest'
+        #name: Default
+        #demands:
+        #  - agent.os -equals Darwin
+        #  - ARCH -equals arm64
+        vmImage: 'ubuntu-latest'
       steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: '12.18.3'
+          versionSpec: '14.16.0'
         displayName: 'Install Node.js'
       - task: Npm@1
         inputs:

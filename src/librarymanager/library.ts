@@ -60,7 +60,7 @@ export class Library implements vscode.QuickPickItem {
 
     return new Promise<Library>((resolve, reject) => {
       let name: string = path.basename(file, ".py");
-      let version: string = null;
+      let version: string = "unknown";
       let repo: string = null;
 
       s.on("data", (data: string) => {
@@ -89,7 +89,7 @@ export class Library implements vscode.QuickPickItem {
     let s: fs.ReadStream = fs.createReadStream(file);
     return new Promise<Library>((resolve, reject) => {
       let name: string = path.basename(file, ".mpy");
-      let version: string = null;
+      let version: string = "unknown";
       s.on("data", (data: string) => {
         let chunk: string = data.toString();
         let start: number = chunk.search(/[\d*\.?]+\x0b__version__/);
@@ -140,7 +140,7 @@ export class Library implements vscode.QuickPickItem {
     let potentials: Library[] = await Promise.all(modules);
 
     return new Promise<Library>((resolve, reject) => {
-      let version: string = null;
+      let version: string = "unknown";
       let repo: string = null;
 
       potentials = potentials.filter((v, i, a) => {

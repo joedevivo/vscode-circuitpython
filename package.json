@@ -2,7 +2,7 @@
   "name": "vscode-circuitpython",
   "displayName": "CircuitPython",
   "description": "CircuitPython for Visual Studio Code",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "publisher": "joedevivo",
   "license": "MIT",
   "qna": "https://github.com/joedevivo/vscode-circuitpython/discussions",
@@ -14,7 +14,7 @@
     "url": "https://github.com/joedevivo/vscode-circuitpython/issues"
   },
   "engines": {
-    "vscode": "^1.55.0"
+    "vscode": "^1.56.0"
   },
   "icon": "images/BlinkaOnDark.png",
   "categories": [
@@ -129,7 +129,7 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "test": "node ./out/test/runTest.js",
-    "electron-rebuild": "electron-rebuild -v 11.3.0",
+    "electron-rebuild": "electron-rebuild -v 12.0.4",
     "build-bindings": "node ./scripts/build-bindings.js",
     "install-bindings": "node ./scripts/install-bindings.js"
   },
@@ -144,7 +144,7 @@
     "@types/vscode": "^1.52.0",
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",
-    "electron": "11.3.0",
+    "electron": "12.0.4",
     "electron-builder": "^22.10.5",
     "electron-rebuild": "^2.3.5",
     "eslint": "^6.8.0",

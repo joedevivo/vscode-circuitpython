@@ -3,6 +3,9 @@
 All notable changes to the "vscode-circuitpython" extension will be documented
 in this file.
 
+## [0.1.12]
+- Electron Rebuild 12.0.4
+
 ## [0.1.11]
 - Fixed [#38](https://github.com/joedevivo/vscode-circuitpython/pull/37)
   issue with Apple Silicon native bindings
