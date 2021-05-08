@@ -3,6 +3,8 @@
 All notable changes to the "vscode-circuitpython" extension will be documented
 in this file.
 
+## [0.1.13]
+- Put the bindings in the correct folder, 0.1.12 is pretty much broken for everyone.
 ## [0.1.12]
 - Electron Rebuild 12.0.4
 
