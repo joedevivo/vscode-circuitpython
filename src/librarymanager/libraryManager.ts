@@ -45,7 +45,7 @@ class LibraryQP implements vscode.QuickPickItem {
       case "update":
         this.update();
         break;
-      
+
       default:
         break;
     }
@@ -75,9 +75,9 @@ export class LibraryManager implements vscode.Disposable {
   public static BUNDLE_URL: string = "https://github.com/adafruit/Adafruit_CircuitPython_Bundle";
 
   public static BUNDLE_SUFFIXES: string[] = [
-    'py', '6.x-mpy'
+    'py', '6.x-mpy', '7.x-mpy'
   ];
-  public static BUNDLE_VERSION_REGEX: RegExp = /\d\d\d\d\d\d\d\d/; 
+  public static BUNDLE_VERSION_REGEX: RegExp = /\d\d\d\d\d\d\d\d/;
   // storageRootDir is passed in from the extension BoardManager as
   // `BoardManager.globalStoragePath` We'll keep up to date libraries here, and all
   // instances of the extension can look here for them.
@@ -124,6 +124,7 @@ export class LibraryManager implements vscode.Disposable {
     this.projectLibDir = this.getProjectLibDir();
 
     // Get their metadata
+    console.log(this.projectLibDir);
     this.workspaceLibraries = await this.loadLibraryMetadata(this.projectLibDir);
 
     this.cpVersion = this.getProjectCPVer();
@@ -140,7 +141,7 @@ export class LibraryManager implements vscode.Disposable {
       // In case nothing exists yet.
       return null;
     }
-    return this.bundlePath("py"); 
+    return this.bundlePath("py");
   }
 
   public async reloadProjectLibraries() {
@@ -219,7 +220,7 @@ export class LibraryManager implements vscode.Disposable {
   }
   // Find it boot_out, so put boot_out.txt in your project root if you want this.
   private getProjectCPVer(): string {
-    let confVer: string = 
+    let confVer: string =
       vscode.workspace.getConfiguration("circuitpython.board").get("version");
 
     let bootOut: string = null;
@@ -251,14 +252,12 @@ export class LibraryManager implements vscode.Disposable {
   }
 
   private getProjectLibDir(): string {
-    let libDir: string = null;
-
-    let l: string = path.join(
+    let libDir: string = path.join(
       this.getProjectRoot(),
       "lib"
     );
-    if (libDir === null && fs.existsSync(l)) {
-      libDir = l;
+    if (!fs.existsSync(libDir)) {
+      fs.mkdirSync(libDir);
     }
     return libDir;
   }
@@ -295,23 +294,30 @@ export class LibraryManager implements vscode.Disposable {
     if(!fs.existsSync(localBundleDir)) {
       return false;
     }
-    let bundles: string[] = fs.readdirSync(localBundleDir).sort();
+    let bundles: fs.Dirent[] = fs.readdirSync(localBundleDir, {withFileTypes: true}).sort();
 
     let suffixRegExp: RegExp = new RegExp(`adafruit-circuitpython-bundle-(.*)-${tag}`);
 
     let suffixes: string[] = [];
-    
+
     bundles.forEach(b => {
-      let p: string = path.join(localBundleDir, b);
-      let lib: string[] = fs.readdirSync(p).filter((v,i,a) => v === "lib");
-      if(lib.length !== 1) {
-        return false;
+      /*
+      It's possible for some operating systems to leave files in the bundle
+      directory *cough* .DS_Store *cough*. Regardless, if there's a file in
+      here, we can't dig deeper in its directory tree, so we'll catch them all.
+      */
+      if(b.isDirectory()) {
+        let p: string = path.join(localBundleDir, b.name);
+        let lib: string[] = fs.readdirSync(p).filter((v,i,a) => v === "lib");
+        if(lib.length !== 1) {
+          return false;
+        }
+        suffixes.push(b.name.match(suffixRegExp)[1]);
       }
-      suffixes.push(b.match(suffixRegExp)[1]);
     });
     // TODO: Should not overwrite BUNDLE_SUFFIXES, better to get the suffixes
     // from the GitHub API
-    
+
     //LibraryManager.BUNDLE_SUFFIXES = suffixes;
     this.localBundleDir = localBundleDir;
 
@@ -333,7 +339,7 @@ export class LibraryManager implements vscode.Disposable {
     if(!fs.existsSync(this.bundleDir)) {
       return null;
     }
-    let tag: string = 
+    let tag: string =
       fs.readdirSync(this.bundleDir)
       .filter((dir: string, i: number, a: string[]) => LibraryManager.BUNDLE_VERSION_REGEX.test(dir))
       .sort()
@@ -345,9 +351,9 @@ export class LibraryManager implements vscode.Disposable {
   Gets latest tag
   */
   private async getLatestBundleTag(): Promise<string> {
-    let r: axios.AxiosResponse = 
+    let r: axios.AxiosResponse =
       await axios.default.get(
-        'https://github.com/adafruit/Adafruit_CircuitPython_Bundle/releases/latest', 
+        'https://github.com/adafruit/Adafruit_CircuitPython_Bundle/releases/latest',
         { headers : { 'Accept': 'application/json'}}
       );
     return await r.data.tag_name;
@@ -362,7 +368,7 @@ export class LibraryManager implements vscode.Disposable {
     for await (const suffix of LibraryManager.BUNDLE_SUFFIXES) {
       let url: string = String.Format(urlRoot, tag, suffix);
       let p: string = path.join(this.storageRootDir, "bundle", tag);
-      
+
       await axios.default.get(url, {responseType: 'stream'}).then((response) => {
         response.data.pipe(
           unzip.Extract({path: p})
@@ -380,7 +386,7 @@ export class LibraryManager implements vscode.Disposable {
       name = path.basename(name, ".py") + ".mpy";
     }
     return path.join(
-      Container.getBundlePath(), 
+      Container.getBundlePath(),
       name
     );
   }
@@ -400,11 +406,12 @@ export class LibraryManager implements vscode.Disposable {
   }
 
   private async loadLibraryMetadata(rootDir: string): Promise<Map<string, Library>> {
-    let libDirs: string[] = 
+    console.log(rootDir);
+    let libDirs: string[] =
       await globby( '*',
                     {absolute: true, cwd: rootDir, deep: 1, onlyFiles: false}
       );
-    
+
     let libraries: Array<Promise<Library>> =
       libDirs.map((p, i, a) => Library.from(p));
 

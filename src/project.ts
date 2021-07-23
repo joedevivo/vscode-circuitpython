@@ -8,9 +8,9 @@ export class Project implements vscode.Disposable {
   private _context: vscode.ExtensionContext = null;
   private _circuitPythonVersion: string = null;
 
-  private _autoCompleteBoard: string = null;
-  private _autoCompleteStdLib: string = null;
-  private _autoCompleteBundle: string = null;
+  private _autoCompleteBoard: string = "";
+  private _autoCompleteStdLib: string = "";
+  private _autoCompleteBundle: string = "";
   private _autoCompleteExtra: string[] = [];
 
   private _boardVID: string = null;

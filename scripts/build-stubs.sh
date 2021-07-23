@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-git clone  https://github.com/adafruit/circuitpython.git
+git clone --depth 1 --branch main https://github.com/adafruit/circuitpython.git
 cd circuitpython
 git submodule init
 git submodule update extmod/ulab

@@ -43,7 +43,7 @@ export class BoardManager implements vscode.Disposable {
       return a.label === b.label ? 0 : (a.label > b.label ? 1 : -1);
     }), { placeHolder: "Choose a board"});
     if (chosen && chosen.label) {
-      this.updateBoardChoiceStatus(chosen);
+      Container.setBoard(chosen);
     }
   }
 

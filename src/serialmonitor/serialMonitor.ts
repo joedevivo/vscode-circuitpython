@@ -1,16 +1,14 @@
 import * as vscode from "vscode";
 import * as os from "os";
-import * as serialport from 'serialport';
-import SerialPort = require("serialport");
-import { BoardManager } from "../boards/boardManager";
+import SerialPort = require("@serialport/stream");
 import { Board } from "../boards/board";
 import { Container } from "../container";
 
 class SerialPickItem implements vscode.QuickPickItem {
   public label: string;
   public description: string;
-  public serialPort: serialport.PortInfo;
-  public constructor(sp: serialport.PortInfo) {
+  public serialPort: SerialPort.PortInfo;
+  public constructor(sp: SerialPort.PortInfo) {
     this.label = sp.path;
     if (sp.vendorId && sp.productId) {
       let b: Board = Board.lookup(sp.vendorId, sp.productId);
@@ -47,39 +45,44 @@ export class SerialMonitor implements vscode.Disposable {
   private _writeEmitter: vscode.EventEmitter<string>;
 
   public constructor() {
-    this._writeEmitter = new vscode.EventEmitter<string>();
-    let pty:vscode.Pseudoterminal = {
-      onDidWrite: this._writeEmitter.event,
-      open: () => this._writeEmitter.fire('Circuit Python Serial Monitor\r\n'),
-      close: () => {},
-      handleInput: (data: string) => {
-        this._serialPort.write(data);
-      }
-    };
-    this._terminal = vscode.window.createTerminal({name: SerialMonitor.SERIAL_MONITOR, pty: pty });
-    this._portsStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 20);
-    this._portsStatusBar.command = "circuitpython.selectSerialPort";
-    this._portsStatusBar.tooltip = "Select Serial Port";
-    this._portsStatusBar.show();
+    try {
+      SerialPort.Binding = require('@serialport/bindings');
+      this._writeEmitter = new vscode.EventEmitter<string>();
+      let pty:vscode.Pseudoterminal = {
+        onDidWrite: this._writeEmitter.event,
+        open: () => this._writeEmitter.fire('Circuit Python Serial Monitor\r\n'),
+        close: () => {},
+        handleInput: (data: string) => {
+          this._serialPort.write(data);
+        }
+      };
+      this._terminal = vscode.window.createTerminal({name: SerialMonitor.SERIAL_MONITOR, pty: pty });
+      this._portsStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 20);
+      this._portsStatusBar.command = "circuitpython.selectSerialPort";
+      this._portsStatusBar.tooltip = "Select Serial Port";
+      this._portsStatusBar.show();
 
-    this._openPortStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 30);
-    this._openPortStatusBar.command = "circuitpython.openSerialMonitor";
-    this._openPortStatusBar.text = `$(plug)`;
-    this._openPortStatusBar.tooltip = "Open Serial Monitor";
-    this._openPortStatusBar.show();
+      this._openPortStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 30);
+      this._openPortStatusBar.command = "circuitpython.openSerialMonitor";
+      this._openPortStatusBar.text = `$(plug)`;
+      this._openPortStatusBar.tooltip = "Open Serial Monitor";
+      this._openPortStatusBar.show();
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   public dispose() {}
 
   // vid/pid needed for usb monitoring, which we're not doing... yet?
   public async selectSerialPort(vid: string, pid: string) {
-    const lists = await serialport.list();
+    const lists = await SerialPort.list();
     // vid & pid available in SerialPort as vendorId & productId
     if (!lists.length) {
       vscode.window.showInformationMessage("No serial port is available.");
       return;
     }
-    const chosen = await vscode.window.showQuickPick(<SerialPickItem[]>lists.map((l: serialport.PortInfo): SerialPickItem => {
+    const chosen = await vscode.window.showQuickPick(<SerialPickItem[]>lists.map((l: SerialPort.PortInfo): SerialPickItem => {
       return new SerialPickItem(l);
     }).sort((a, b): number => {
         return a.label === b.label ? 0 : (a.label > b.label ? 1 : -1);

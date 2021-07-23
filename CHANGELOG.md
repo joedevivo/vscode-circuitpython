@@ -3,6 +3,23 @@
 All notable changes to the "vscode-circuitpython" extension will be documented
 in this file.
 
+## [0.1.14]
+
+- Added download for 7.x mpy bundle
+- Electron Rebuild 12.0.13
+
+### Bug Fixes
+- Skips enabling serial monitor if native bindings aren't loaded
+  - This prevents the extension from crashing on launch if the VSCode version of
+    electron has changed or the bindings aren't available for your
+    system/architecture
+- Uses `""` instead of `null` in the `python.analysis.extraPaths` setting if a
+  board is not chosen.
+- Fixed issue that prevented the board stub at `python.analysis.extraPaths[0]`
+  from changing on board selection.
+- Fixed an issue preventing extension activation when workspace doesn't contain a `lib` folder
+- Fixed error downloading new Adafruit Bundle if bundle storage contains a file,
+  where it previously assumed directories only.
 ## [0.1.13]
 - Put the bindings in the correct folder, 0.1.12 is pretty much broken for everyone.
 ## [0.1.12]
@@ -11,9 +28,11 @@ in this file.
 ## [0.1.11]
 - Fixed [#38](https://github.com/joedevivo/vscode-circuitpython/pull/37)
   issue with Apple Silicon native bindings
-- Fixed [#42](https://github.com/joedevivo/vscode-circuitpython/pull/42) & [#44](https://github.com/joedevivo/vscode-circuitpython/pull/44)  
-  `boot_out.txt` was required. Still is to determine CircuitPython version, but we can live without that.
-  
+- Fixed [#42](https://github.com/joedevivo/vscode-circuitpython/pull/42) &
+  [#44](https://github.com/joedevivo/vscode-circuitpython/pull/44)
+  `boot_out.txt` was required. Still is to determine CircuitPython version, but
+  we can live without that.
+
 ## [0.1.10]
 - Disable pylint by default
 - Opt in to pylance by default
