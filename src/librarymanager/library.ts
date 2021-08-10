@@ -46,7 +46,7 @@ export class Library implements vscode.QuickPickItem {
     if(ext === ".py") {
       return Library.fromFile(p);
     } else if(ext === ".mpy") {
-      return Library.fromBinaryFile(p); 
+      return Library.fromBinaryFile(p);
     } else {
       return Library.fromDirectory(p);
     }
@@ -83,7 +83,13 @@ export class Library implements vscode.QuickPickItem {
   }
 
   /*
-  This handles the single binary mpy file 
+  This handles the single binary mpy file
+
+  Escape characters changed between CP6 and CP7.
+  for 6: \xb0
+  for 7: \x16\x16
+
+  If it happens again, this page helped: https://www.w3schools.com/tags/ref_urlencode.ASP
   */
   public static async fromBinaryFile(file: string): Promise<Library> {
     let s: fs.ReadStream = fs.createReadStream(file);
@@ -92,9 +98,12 @@ export class Library implements vscode.QuickPickItem {
       let version: string = "unknown";
       s.on("data", (data: string) => {
         let chunk: string = data.toString();
-        let start: number = chunk.search(/[\d*\.?]+\x0b__version__/);
-        let end: number = chunk.indexOf('\x0b__version');
+        let start: number = chunk.search(/[\d*\.?]+[\x0b|\x16]+__version__/);
+        let end: number = chunk.indexOf('__version');
         version = chunk.substring(start, end).trim();
+        while (version.endsWith("\x16") || version.endsWith("\x0b")) {
+          version = version.substring(0, version.length - 1);
+        }
       })
       .once('end', () => {
         let l: Library = new Library(name, version, null, file, false);
@@ -125,7 +134,7 @@ export class Library implements vscode.QuickPickItem {
     });
     let mpyfiles: string[] = _.filter(files, (f) => path.extname(f) === ".mpy");
     let pyfiles: string[] = _.filter(files, (f) => path.extname(f) === ".py");
-    
+
     // Check mpy first, since sometimes mpy folders have an __init__.py, but py
     // directories never have mpy files
     if (mpyfiles.length > 0) {
@@ -150,7 +159,7 @@ export class Library implements vscode.QuickPickItem {
       let l: Library = _.find(potentials, (v) => v.repo !== null);
       if(l === undefined) {
         l = potentials.shift();
-      }  
+      }
       version = l.version;
       repo = l.repo;
       l = new Library(name, version, repo, dir, true);

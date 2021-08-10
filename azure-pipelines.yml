@@ -6,7 +6,7 @@ trigger:
     include:
     - refs/tags/v*
 
-# TODO: Parameterize electon version & abi
+# TODO: Parameterize electron version & abi
 stages:
   - stage: Bindings
     jobs:
