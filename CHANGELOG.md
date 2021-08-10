@@ -3,6 +3,12 @@
 All notable changes to the "vscode-circuitpython" extension will be documented
 in this file.
 
+## [0.1.15]
+- Electron Rebuild 13.1.7
+- Board Update
+- CircuitPython Update
+- Fix version detection in mpy files for CP7
+
 ## [0.1.14]
 
 - Added download for 7.x mpy bundle

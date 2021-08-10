@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const nodeAbi = require('node-abi');
 const globby = require('globby');
-var abi = nodeAbi.getAbi('12.0.4', 'electron');
+var abi = nodeAbi.getAbi('13.1.7', 'electron');
 var dir = `node-v${abi}-${process.platform}-${process.arch}`;
 console.log(`Building bindings for ${dir}`);
 var fs = require('fs');
