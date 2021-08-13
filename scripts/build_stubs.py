@@ -45,9 +45,7 @@ def parse_generic_stub(board_stub):
 
         # Iterate the line ranges
         for name, start, end in zip(names, f, f[1:]):
-            it = "  " + "".join(stubs[start:end])
-
-            generic_stubs[name] = it
+            generic_stubs[name] = "".join(stubs[start:end])
     return generic_stubs
 
 
@@ -95,8 +93,7 @@ def parse_pins(generic_stubs, pins: pathlib.Path, board_stubs):
 
     imports_string = "".join("import %s\n" % x for x in sorted(imports))
 
-    # Indent 0 char for the first pin, 2 for the rest?
-    stubs_string = "  ".join(stub_lines)
+    stubs_string = "".join(stub_lines)
     return imports_string, stubs_string
 
 
@@ -181,7 +178,6 @@ def process_boards(repo_root, circuitpy_repo_root, generic_stubs):
             outfile.write('"""\n')
 
             # start of actual stubs
-            outfile.write("  board.")
             outfile.write(stubs_string)
 
             for p in board_stubs:
