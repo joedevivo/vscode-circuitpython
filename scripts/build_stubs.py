@@ -104,11 +104,11 @@ def parse_pins(generic_stubs, pins: pathlib.Path, board_stubs):
 def process_boards(repo_root, circuitpy_repo_root, generic_stubs):
     boards = []
 
-    board_dirs = circuitpy_repo_root.glob("ports/*/boards/*")
-    for b in board_dirs:
+    board_configs = circuitpy_repo_root.glob("ports/*/boards/*/mpconfigboard.mk")
+    for config in board_configs:
+        b = config.parent
         site_path = b.stem
 
-        config = b / "mpconfigboard.mk"
         print(config)
         pins = b / "pins.c"
         if not config.is_file() or not pins.is_file():
