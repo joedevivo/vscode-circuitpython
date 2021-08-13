@@ -70,7 +70,7 @@ def parse_pins(generic_stubs, pins: pathlib.Path, board_stubs):
           imports.add("busio")
         continue
 
-      pin_type = "Any"
+      pin_type = None
 
       # sometimes we can guess better based on the value
       pin_value = pin.group("value")
@@ -80,6 +80,10 @@ def parse_pins(generic_stubs, pins: pathlib.Path, board_stubs):
       elif pin_value.startswith("&pin_"):
         imports.add("microcontroller")
         pin_type = "microcontroller.Pin"
+      
+      if pin_type is None:
+        imports.add("typing")
+        pin_type = "typing.Any"
       
       stub_lines.append("{0}: {1} = ...\n".format(pin_name, pin_type))
 
@@ -151,7 +155,6 @@ def process_boards(repo_root, circuitpy_repo_root, generic_stubs):
     with open(board_pyi_file, 'w') as outfile:
       imports_string, stubs_string = parse_pins(generic_stubs, pins, board_stubs)
       outfile.write("from __future__ import annotations\n")
-      outfile.write("from typing import Any\n")
       outfile.write(imports_string)
 
       # start of module doc comment
