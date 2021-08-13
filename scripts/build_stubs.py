@@ -67,12 +67,26 @@ for b in board_dirs :
           usb_product = line.split("=")[1].split("#")[0].strip('" \n')
         elif line.startswith("USB_MANUFACTURER"):
           usb_manufacturer = line.split("=")[1].split("#")[0].strip('" \n')
+        
+        # CircuitPython 7 BLE-only boards
+        elif line.startswith("CIRCUITPY_CREATOR_ID"):
+          usb_vid = line.split("=")[1].split("#")[0].strip('" \n')
+        elif line.startswith("CIRCUITPY_CREATION_ID"):
+          usb_pid = line.split("=")[1].split("#")[0].strip('" \n')
     if usb_manufacturer == "Nadda-Reel Company LLC":
       continue
 
     usb_vid = normalize_vid_pid(usb_vid)
     usb_pid = normalize_vid_pid(usb_pid)
 
+    # CircuitPython 7 BLE-only boards have no usb manuf/product
+    description = site_path
+    if usb_manufacturer and usb_product:
+      description = '{0} {1}'.format(usb_manufacturer, usb_product)
+
+    board = {'vid': usb_vid, 'pid': usb_pid, 'product': usb_product,
+             'manufacturer': usb_manufacturer, 'site_path': site_path,
+             'description': description}
     boards.append(board)
     print("{0}:{1} {2}, {3}".format(usb_vid, usb_pid, usb_manufacturer, usb_product))
     board_pyi_path = pathlib.Path(os.path.join("boards", usb_vid, usb_pid))
@@ -89,7 +103,7 @@ for b in board_dirs :
     with open(board_pyi_file, 'w') as outfile, open(pins) as p:
       outfile.write("from typing import Any\n")
       outfile.write('"""\n')
-      outfile.write('board {0} {1}\n'.format(board['manufacturer'], board['product']))
+      outfile.write('board {0}\n'.format(board['description']))
       outfile.write('https://circuitpython.org/boards/{0}\n'.format(board['site_path']))
       outfile.write('"""\n')
       outfile.write("  board.")
