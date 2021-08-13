@@ -58,7 +58,7 @@ def parse_pins(generic_stubs, pins, board_stubs):
   stub_lines = []
   with open(pins) as p:
     for line in p:
-      pin = re.search(r'.*_QSTR\(MP_QSTR_([^\)]*)', line)
+      pin = re.match(r'\s*{\s*MP_ROM_QSTR\(MP_QSTR_([^\)\s]*)', line)
       if pin is None:
         continue
       pin_name = pin[1]
@@ -71,7 +71,7 @@ def parse_pins(generic_stubs, pins, board_stubs):
       pin_type = "Any"
 
       # sometimes we can guess better based on the value
-      advanced_pin = re.search(r'.*_QSTR\(MP_QSTR_([^\)]*)\)\s*,\s*MP_ROM_PTR\(([^\)]*)\)', line)
+      advanced_pin = re.match(r'\s*{\s*MP_ROM_QSTR\(MP_QSTR_([^\)]*)\)\s*,\s*MP_ROM_PTR\(([^\)]*)\).*', line)
       if advanced_pin is not None:
         pin_value = advanced_pin[2]
         if pin_value.startswith("&displays"):
