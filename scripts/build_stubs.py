@@ -29,23 +29,25 @@ def main():
 
 def parse_generic_stub(board_stub):
     generic_stubs = {}
+    def_re = re.compile(r"def ([^\(]*)\(.*")
     with open(board_stub) as stub:
         stubs = stub.readlines()
-        i = 0
-        f = []
-        for s in stubs:
-            if s.startswith("def"):
-                f.append(i)
-            i += 1
-        f.append(i)
 
-        x = f.pop(0)
-        for y in f:
-            it = "  " + "".join(stubs[x : y - 1])
-            r = re.search(r"def ([^\(]*)\(", it)
-            k = r[1]
-            generic_stubs[k] = it
-            x = y
+        # Find the first line number and name of each definition
+        f = []
+        names = []
+        for i, s in enumerate(stubs):
+            match = def_re.match(s)
+            if match is not None:
+                f.append(i)
+                names.append(match[1])
+        f.append(len(stubs))
+
+        # Iterate the line ranges
+        for name, start, end in zip(names, f, f[1:]):
+            it = "  " + "".join(stubs[start:end])
+
+            generic_stubs[name] = it
     return generic_stubs
 
 
