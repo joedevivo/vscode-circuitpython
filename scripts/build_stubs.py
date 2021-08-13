@@ -59,6 +59,15 @@ def parse_pins(generic_stubs, pins, board_stubs):
         continue
 
       pin_type = "Any"
+
+      # sometimes we can guess better based on the value
+      advanced_pin = re.search(r'.*_QSTR\(MP_QSTR_([^\)]*)\)\s*,\s*MP_ROM_PTR\(([^\)]*)\)', line)
+      if advanced_pin is not None:
+        pin_value = advanced_pin[2]
+        if pin_value.startswith("&displays"):
+          imports.add("import displayio\n")
+          pin_type = "displayio.Display"
+      
       stub_lines.append("{0}: {1} = ...\n".format(pin_name, pin_type))
 
   imports_string = "".join(sorted(imports))
