@@ -11,10 +11,11 @@ import json
 # These need to be bundled with the extension, which means that adding new boards is still
 # a new release of the extension.
 
+repo_root = pathlib.Path(__file__).resolve().parent.parent
 # First thing we want to do is store in memory, the contents of 
-# ./circuitpython/circuitpython-stubs/board/__init__.py so we can append it to
+# ./stubs/board/__init__.py so we can append it to
 # every other board.
-board_stub = pathlib.Path(os.path.join("./stubs/board", "__init__.pyi"))
+board_stub = repo_root / "stubs" / "board" / "__init__.pyi"
 
 # See [Issue #26](https://github.com/joedevivo/vscode-circuitpython/issues/26) 
 # for more on this.
@@ -43,14 +44,15 @@ def normalize_vid_pid(vid_or_pid: str):
 
 # now, while we build the actual board stubs, replace any line that starts with `  $name:` with value
 
-board_dirs = glob.glob("circuitpython/ports/*/boards/*")
+board_dirs = repo_root.glob("circuitpython/ports/*/boards/*")
 boards = []
-for b in board_dirs :
-  site_path = os.path.split(b)[-1]
 
-  config = pathlib.Path(os.path.join(b, "mpconfigboard.mk"))
+for b in board_dirs:
+  site_path = b.stem
+
+  config = b / "mpconfigboard.mk"
   print(config)
-  pins   = pathlib.Path(os.path.join(b, "pins.c"))
+  pins   = b / "pins.c"
   if config.is_file() and pins.is_file():
 
     usb_vid = ""
@@ -89,9 +91,9 @@ for b in board_dirs :
              'description': description}
     boards.append(board)
     print("{0}:{1} {2}, {3}".format(usb_vid, usb_pid, usb_manufacturer, usb_product))
-    board_pyi_path = pathlib.Path(os.path.join("boards", usb_vid, usb_pid))
+    board_pyi_path = repo_root / "boards" / usb_vid / usb_pid
     board_pyi_path.mkdir(parents=True, exist_ok=True)
-    board_pyi_file = pathlib.Path(os.path.join(board_pyi_path, "board.pyi"))
+    board_pyi_file = board_pyi_path / "board.pyi"
 
     # Indent 0 char for the first pin, 2 for the rest
     indent = ""
@@ -122,7 +124,7 @@ for b in board_dirs :
       # End for
       for p in board_stubs:
         outfile.write("{0}\n".format(board_stubs[p]))
-    
-json_file = pathlib.Path(os.path.join("boards", "metadata.json"))
+
+json_file = repo_root / "boards" / "metadata.json"
 with open(json_file, 'w') as metadata:
   json.dump(boards, metadata)
