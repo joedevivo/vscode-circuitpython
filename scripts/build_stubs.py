@@ -42,6 +42,31 @@ def normalize_vid_pid(vid_or_pid: str):
   """Make a hex string all uppercase except for the 0x."""
   return vid_or_pid.upper().replace("0X", "0x")
 
+
+def parse_pins(generic_stubs, pins, board_stubs):
+  imports = set()
+  stub_lines = []
+  with open(pins) as p:
+    for line in p:
+      pin = re.search(r'.*_QSTR\(MP_QSTR_([^\)]*)', line)
+      if pin is None:
+        continue
+      pin_name = pin[1]
+      if pin_name in generic_stubs:
+        board_stubs[pin_name] = generic_stubs[pin_name]
+        if "busio" in generic_stubs[pin_name]:
+          imports.add("import busio\n")
+        continue
+
+      pin_type = "Any"
+      stub_lines.append("{0}: {1} = ...\n".format(pin_name, pin_type))
+
+  imports_string = "".join(sorted(imports))
+
+  # Indent 0 char for the first pin, 2 for the rest
+  stubs_string = "  ".join(stub_lines)
+  return imports_string, stubs_string
+
 # now, while we build the actual board stubs, replace any line that starts with `  $name:` with value
 
 board_dirs = repo_root.glob("circuitpython/ports/*/boards/*")
@@ -95,34 +120,26 @@ for b in board_dirs:
     board_pyi_path.mkdir(parents=True, exist_ok=True)
     board_pyi_file = board_pyi_path / "board.pyi"
 
-    # Indent 0 char for the first pin, 2 for the rest
-    indent = ""
-
     # We're going to put the common stuff from the generic board stub at the 
     # end of the file, so we'll collect them after the loop
     board_stubs = {}
 
-    with open(board_pyi_file, 'w') as outfile, open(pins) as p:
+    with open(board_pyi_file, 'w') as outfile:
+      imports_string, stubs_string = parse_pins(generic_stubs, pins, board_stubs)
       outfile.write("from __future__ import annotations\n")
       outfile.write("from typing import Any\n")
+      outfile.write(imports_string)
+
+      # start of module doc comment
       outfile.write('"""\n')
       outfile.write('board {0}\n'.format(board['description']))
       outfile.write('https://circuitpython.org/boards/{0}\n'.format(board['site_path']))
       outfile.write('"""\n')
+
+      # start of actual stubs
       outfile.write("  board.")
-      for line in p:
-        pin = re.search(r'.*_QSTR\(MP_QSTR_([^\)]*)', line)
-        if pin == None: 
-          continue
-        pin_name = pin[1]
-        if pin_name in generic_stubs:
-          board_stubs[pin_name] = generic_stubs[pin_name]
-          continue
-        else:
-          outfile.write("{0}{1}: Any = ...\n".format(indent, pin_name))
-          #redefine indent every time
-          indent = "  "
-      # End for
+      outfile.write(stubs_string)
+
       for p in board_stubs:
         outfile.write("{0}\n".format(board_stubs[p]))
 
