@@ -53,15 +53,17 @@ def normalize_vid_pid(vid_or_pid: str):
   return vid_or_pid.upper().replace("0X", "0x")
 
 
-def parse_pins(generic_stubs, pins, board_stubs):
+_PIN_DEF_RE = re.compile(r'\s*{\s*MP_ROM_QSTR\(MP_QSTR_(?P<name>[^\)]*)\)\s*,\s*MP_ROM_PTR\((?P<value>[^\)]*)\).*')
+
+def parse_pins(generic_stubs, pins: pathlib.Path, board_stubs):
   imports = set()
   stub_lines = []
   with open(pins) as p:
     for line in p:
-      pin = re.match(r'\s*{\s*MP_ROM_QSTR\(MP_QSTR_([^\)\s]*)', line)
+      pin = _PIN_DEF_RE.match(line)
       if pin is None:
         continue
-      pin_name = pin[1]
+      pin_name = pin.group("name")
       if pin_name in generic_stubs:
         board_stubs[pin_name] = generic_stubs[pin_name]
         if "busio" in generic_stubs[pin_name]:
@@ -71,12 +73,13 @@ def parse_pins(generic_stubs, pins, board_stubs):
       pin_type = "Any"
 
       # sometimes we can guess better based on the value
-      advanced_pin = re.match(r'\s*{\s*MP_ROM_QSTR\(MP_QSTR_([^\)]*)\)\s*,\s*MP_ROM_PTR\(([^\)]*)\).*', line)
-      if advanced_pin is not None:
-        pin_value = advanced_pin[2]
-        if pin_value.startswith("&displays"):
-          imports.add("displayio")
-          pin_type = "displayio.Display"
+      pin_value = pin.group("value")
+      if pin_value.startswith("&displays"):
+        imports.add("displayio")
+        pin_type = "displayio.Display"
+      elif pin_value.startswith("&pin_"):
+        imports.add("microcontroller")
+        pin_type = "microcontroller.Pin"
       
       stub_lines.append("{0}: {1} = ...\n".format(pin_name, pin_type))
 
