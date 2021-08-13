@@ -103,6 +103,7 @@ for b in board_dirs:
     board_stubs = {}
 
     with open(board_pyi_file, 'w') as outfile, open(pins) as p:
+      outfile.write("from __future__ import annotations\n")
       outfile.write("from typing import Any\n")
       outfile.write('"""\n')
       outfile.write('board {0}\n'.format(board['description']))
