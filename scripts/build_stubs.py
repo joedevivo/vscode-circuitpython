@@ -53,7 +53,7 @@ def parse_pins(generic_stubs, pins, board_stubs):
       if pin_name in generic_stubs:
         board_stubs[pin_name] = generic_stubs[pin_name]
         if "busio" in generic_stubs[pin_name]:
-          imports.add("import busio\n")
+          imports.add("busio")
         continue
 
       pin_type = "Any"
@@ -63,14 +63,14 @@ def parse_pins(generic_stubs, pins, board_stubs):
       if advanced_pin is not None:
         pin_value = advanced_pin[2]
         if pin_value.startswith("&displays"):
-          imports.add("import displayio\n")
+          imports.add("displayio")
           pin_type = "displayio.Display"
       
       stub_lines.append("{0}: {1} = ...\n".format(pin_name, pin_type))
 
-  imports_string = "".join(sorted(imports))
+  imports_string = "".join("import %s\n" % x for x in sorted(imports))
 
-  # Indent 0 char for the first pin, 2 for the rest
+  # Indent 0 char for the first pin, 2 for the rest?
   stubs_string = "  ".join(stub_lines)
   return imports_string, stubs_string
 
