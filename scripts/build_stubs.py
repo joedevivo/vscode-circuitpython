@@ -37,6 +37,10 @@ with open(board_stub) as stub:
     generic_stubs[k] = it
     x = y
 
+def normalize_vid_pid(vid_or_pid: str):
+  """Make a hex string all uppercase except for the 0x."""
+  return vid_or_pid.upper().replace("0X", "0x")
+
 # now, while we build the actual board stubs, replace any line that starts with `  $name:` with value
 
 board_dirs = glob.glob("circuitpython/ports/*/boards/*")
@@ -66,7 +70,9 @@ for b in board_dirs :
     if usb_manufacturer == "Nadda-Reel Company LLC":
       continue
 
-    board = { 'vid': usb_vid, 'pid': usb_pid, 'product': usb_product, 'manufacturer': usb_manufacturer, 'site_path': site_path }
+    usb_vid = normalize_vid_pid(usb_vid)
+    usb_pid = normalize_vid_pid(usb_pid)
+
     boards.append(board)
     print("{0}:{1} {2}, {3}".format(usb_vid, usb_pid, usb_manufacturer, usb_product))
     board_pyi_path = pathlib.Path(os.path.join("boards", usb_vid, usb_pid))
