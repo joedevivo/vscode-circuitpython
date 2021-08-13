@@ -1,23 +1,21 @@
-import appdirs
-import subprocess
-import os
-#import mypy
-import pathlib
-import re
-import glob
-import json
-
+#!/usr/bin/env python3
 # This is a script for using circuitpython's repo to make pyi files for each board type.
 # These need to be bundled with the extension, which means that adding new boards is still
 # a new release of the extension.
 
+#import mypy
+import json
+import pathlib
+import re
+
+
 repo_root = pathlib.Path(__file__).resolve().parent.parent
-# First thing we want to do is store in memory, the contents of 
+# First thing we want to do is store in memory, the contents of
 # ./stubs/board/__init__.py so we can append it to
 # every other board.
 board_stub = repo_root / "stubs" / "board" / "__init__.pyi"
 
-# See [Issue #26](https://github.com/joedevivo/vscode-circuitpython/issues/26) 
+# See [Issue #26](https://github.com/joedevivo/vscode-circuitpython/issues/26)
 # for more on this.
 generic_stubs = {}
 with open(board_stub) as stub:
@@ -103,7 +101,7 @@ for b in board_dirs:
           usb_product = line.split("=")[1].split("#")[0].strip('" \n')
         elif line.startswith("USB_MANUFACTURER"):
           usb_manufacturer = line.split("=")[1].split("#")[0].strip('" \n')
-        
+
         # CircuitPython 7 BLE-only boards
         elif line.startswith("CIRCUITPY_CREATOR_ID"):
           usb_vid = line.split("=")[1].split("#")[0].strip('" \n')
@@ -129,7 +127,7 @@ for b in board_dirs:
     board_pyi_path.mkdir(parents=True, exist_ok=True)
     board_pyi_file = board_pyi_path / "board.pyi"
 
-    # We're going to put the common stuff from the generic board stub at the 
+    # We're going to put the common stuff from the generic board stub at the
     # end of the file, so we'll collect them after the loop
     board_stubs = {}
 
