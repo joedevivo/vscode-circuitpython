@@ -8,33 +8,45 @@ import json
 import pathlib
 import re
 
+def main():
+  repo_root = pathlib.Path(__file__).resolve().parent.parent
+  # First thing we want to do is store in memory, the contents of
+  # ./stubs/board/__init__.py so we can append it (partially) to
+  # every other board.
+  # See [Issue #26](https://github.com/joedevivo/vscode-circuitpython/issues/26)
+  # for more on this.
+  board_stub = repo_root / "stubs" / "board" / "__init__.pyi"
+  generic_stubs = parse_generic_stub(board_stub)
 
-repo_root = pathlib.Path(__file__).resolve().parent.parent
-# First thing we want to do is store in memory, the contents of
-# ./stubs/board/__init__.py so we can append it to
-# every other board.
-board_stub = repo_root / "stubs" / "board" / "__init__.pyi"
+  circuitpy_repo_root = repo_root / "circuitpython"
+  boards = process_boards(repo_root, circuitpy_repo_root, generic_stubs)
 
-# See [Issue #26](https://github.com/joedevivo/vscode-circuitpython/issues/26)
-# for more on this.
-generic_stubs = {}
-with open(board_stub) as stub:
-  stubs = stub.readlines()
-  i = 0
-  f = []
-  for s in stubs:
-    if s.startswith('def'):
-      f.append(i)
-    i += 1
-  f.append(i)
+  json_file = repo_root / "boards" / "metadata.json"
+  with open(json_file, 'w') as metadata:
+    json.dump(boards, metadata)
 
-  x = f.pop(0)
-  for y in f:
-    it = '  ' + ''.join(stubs[x:y-1])
-    r = re.search(r'def ([^\(]*)\(', it)
-    k = r[1]
-    generic_stubs[k] = it
-    x = y
+
+
+def parse_generic_stub(board_stub):
+  generic_stubs = {}
+  with open(board_stub) as stub:
+    stubs = stub.readlines()
+    i = 0
+    f = []
+    for s in stubs:
+      if s.startswith('def'):
+        f.append(i)
+      i += 1
+    f.append(i)
+
+    x = f.pop(0)
+    for y in f:
+      it = '  ' + ''.join(stubs[x:y-1])
+      r = re.search(r'def ([^\(]*)\(', it)
+      k = r[1]
+      generic_stubs[k] = it
+      x = y
+  return generic_stubs
 
 def normalize_vid_pid(vid_or_pid: str):
   """Make a hex string all uppercase except for the 0x."""
@@ -76,16 +88,18 @@ def parse_pins(generic_stubs, pins, board_stubs):
 
 # now, while we build the actual board stubs, replace any line that starts with `  $name:` with value
 
-board_dirs = repo_root.glob("circuitpython/ports/*/boards/*")
-boards = []
+def process_boards(repo_root, circuitpy_repo_root, generic_stubs):
+  boards = []
 
-for b in board_dirs:
-  site_path = b.stem
+  board_dirs = circuitpy_repo_root.glob("ports/*/boards/*")
+  for b in board_dirs:
+    site_path = b.stem
 
-  config = b / "mpconfigboard.mk"
-  print(config)
-  pins   = b / "pins.c"
-  if config.is_file() and pins.is_file():
+    config = b / "mpconfigboard.mk"
+    print(config)
+    pins   = b / "pins.c"
+    if not config.is_file() or not pins.is_file():
+      continue
 
     usb_vid = ""
     usb_pid = ""
@@ -149,7 +163,8 @@ for b in board_dirs:
 
       for p in board_stubs:
         outfile.write("{0}\n".format(board_stubs[p]))
+  return boards
 
-json_file = repo_root / "boards" / "metadata.json"
-with open(json_file, 'w') as metadata:
-  json.dump(boards, metadata)
+
+if __name__ == "__main__":
+  main()
