@@ -78,7 +78,10 @@ def parse_pins(generic_stubs, pins: pathlib.Path, board_stubs):
 
             # sometimes we can guess better based on the value
             pin_value = pin.group("value")
-            if pin_value.startswith("&displays"):
+            if pin_value == "&displays[0].epaper_display":
+                imports.add("displayio")
+                pin_type = "displayio.EPaperDisplay"
+            elif pin_value == "&displays[0].display":
                 imports.add("displayio")
                 pin_type = "displayio.Display"
             elif pin_value.startswith("&pin_"):
