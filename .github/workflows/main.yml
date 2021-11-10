@@ -1,0 +1,82 @@
+name: CI
+on:
+  push:
+    branches:
+        - gha
+jobs:
+  linuxBindings:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Node.js
+        uses:  actions/setup-node@v1
+        with:
+          node-version: 14.16
+      - name: npm install
+        run: |
+          npm install
+          npm run electron-rebuild
+          npm run build-bindings
+      - name: persist bindings
+        uses: actions/upload-artifact@v1
+        with:
+          name: bindings-linux
+          path: bindings
+  macosX86Bindings:
+    runs-on:  macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Node.js
+        uses:  actions/setup-node@v1
+        with:
+          node-version: 14.16
+      - name: npm install
+        run: |
+          npm install
+          npm run electron-rebuild
+          npm run build-bindings
+      - name: persist bindings
+        uses: actions/upload-artifact@v1
+        with:
+          name: bindings-macos-x86
+          path: bindings
+  macosArmBindings:
+    runs-on:  self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Node.js
+        uses:  actions/setup-node@v1
+        with:
+          node-version: 14.16
+      - name: npm install
+        run: |
+          npm install
+          npm run electron-rebuild
+          npm run build-bindings
+      - name: persist bindings
+        uses: actions/upload-artifact@v1
+        with:
+          name: bindings-macos-arm
+          path: bindings
+  win10Bindings:
+    runs-on:  windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Node.js
+        uses:  actions/setup-node@v1
+        with:
+          node-version: 14.16
+      - name: npm install
+        run: |
+          npm install
+          npm run electron-rebuild
+          npm run build-bindings
+      - name: persist bindings
+        uses: actions/upload-artifact@v1
+        with:
+          name: bindings-windows-x86
+          path: bindings
