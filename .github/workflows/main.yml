@@ -44,6 +44,8 @@ jobs:
           path: bindings
   macosArmBindings:
     runs-on:  self-hosted
+    env:
+      ARCH: arm64
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -54,9 +56,11 @@ jobs:
       #    node-version: 14.16
       - name: npm install
         run: |
-          npm install
-          npm run electron-rebuild
-          npm run build-bindings
+          which python3
+          arch -arm64 which python3
+          arch -arm64 npm install
+          arch -arm64 npm run electron-rebuild
+          arch -arm64 npm run build-bindings
       - name: persist bindings
         uses: actions/upload-artifact@v1
         with:
