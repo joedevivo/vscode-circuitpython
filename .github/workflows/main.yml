@@ -51,10 +51,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Install Node.js
+        if: ${{ runner.arch == 'x64' || runner.arch == 'x86'}}
         uses:  actions/setup-node@v2
         with:
           node-version: 14.16
-          architecture: ${{ matrix.NODE_ARCH }}
       - name: npm install
         run: |
           npm install
@@ -75,5 +75,5 @@ jobs:
           name: vscode-circuitpython-dev-${{ matrix.TARGET }}-${{github.sha}}.vsix
           path: ./vscode-circuitpython.vsix
       #- name: Publish to VSCE Marketplace
-      #  if: ${{ github.ref }} == master
+      #  if: ${{ github.ref == 'refs/heads/master' }}
 
