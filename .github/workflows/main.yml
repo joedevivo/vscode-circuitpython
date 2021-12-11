@@ -28,30 +28,47 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [
-          ubuntu-latest,
-          macos-latest,
-          windows-latest,
-          self-hosted
-        ]
         include:
-          - os: ubuntu-latest
-            TARGET: linux-x64
-            NODE_ARCH: x64
-          - os: macos-latest
-            TARGET: darwin-x64
-            NODE_ARCH: x64
           - os: windows-latest
-            TARGET: win32-x64
-            NODE_ARCH: x64
-          - os: self-hosted
-            TARGET: darwin-arm64
-            NODE_ARCH: arm64
+            platform: win32
+            arch: x64
+            npm_config_arch: x64
+          - os: windows-latest
+            platform: win32
+            arch: ia32
+            npm_config_arch: ia32
+          - os: windows-latest
+            platform: win32
+            arch: arm64
+            npm_config_arch: arm
+          - os: ubuntu-latest
+            platform: linux
+            arch: x64
+            npm_config_arch: x64
+          - os: ubuntu-latest
+            platform: linux
+            arch: arm64
+            npm_config_arch: arm64
+          - os: ubuntu-latest
+            platform: linux
+            arch: armhf
+            npm_config_arch: arm
+          - os: ubuntu-latest
+            platform: alpine
+            arch: x64
+            npm_config_arch: x64
+          - os: macos-latest
+            platform: darwin
+            arch: x64
+            npm_config_arch: x64
+          - os: macos-latest
+            platform: darwin
+            arch: arm64
+            npm_config_arch: arm64
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Install Node.js
-        if: ${{ runner.name != 'M1' }}
         uses:  actions/setup-node@v2
         with:
           node-version: 14.16
@@ -59,6 +76,9 @@ jobs:
         run: |
           npm install
           npm run electron-rebuild
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          npm_config_arch: ${{ matrix.npm_config_arch }}
       - name: Download Stubs
         uses: actions/download-artifact@v2
         with:
@@ -67,12 +87,14 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: boards
+      - shell: pwsh
+        run: echo "target=${{ matrix.platform }}-${{ matrix.arch }}" >> $env:GITHUB_ENV
       - name: Package Extension
-        run: ./node_modules/.bin/vsce package --target ${{ matrix.TARGET }} -o vscode-circuitpython.vsix
+        run: ./node_modules/.bin/vsce package --target ${{ env.target }} -o vscode-circuitpython.vsix
       - name: Upload Package
         uses: actions/upload-artifact@v2
         with:
-          name: vscode-circuitpython-dev-${{ matrix.TARGET }}-${{github.sha}}.vsix
+          name: vscode-circuitpython-dev-${{ env.target }}-${{github.sha}}.vsix
           path: ./vscode-circuitpython.vsix
       #- name: Publish to VSCE Marketplace
       #  if: ${{ github.ref == 'refs/heads/master' }}
