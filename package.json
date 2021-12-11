@@ -129,7 +129,7 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "test": "node ./out/test/runTest.js",
-    "electron-rebuild": "electron-rebuild -v 13.1.7",
+    "electron-rebuild": "electron-rebuild -v 13.5.2",
     "build-bindings": "node ./scripts/build-bindings.js",
     "install-bindings": "node ./scripts/install-bindings.js"
   },
@@ -144,7 +144,7 @@
     "@types/vscode": "^1.59.0",
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",
-    "electron": "13.1.7",
+    "electron": "13.5.2",
     "electron-builder": "^22.11.7",
     "electron-rebuild": "^2.3.5",
     "eslint": "^6.8.0",
