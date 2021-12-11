@@ -10,8 +10,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build Stubs
-        run: |
-          ./scripts/build-stubs.sh
+        run: ./scripts/build-stubs.sh
       - name: Persist Stubs
         uses: actions/upload-artifact@v2
         with:
@@ -32,12 +31,18 @@ jobs:
         os: [
           ubuntu-latest,
           macos-latest,
-          windows-latest
+          windows-latest,
+          self-hosted
         ]
         include:
           - os: ubuntu-latest
+            PLATFORM: linux-x64
           - os: macos-latest
+            PLATFORM: darwin-x64
           - os: windows-latest
+            PLATFORM: win32-x64
+          - os: self-hosted
+            PLATFORM: darwin-arm64
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -62,6 +67,7 @@ jobs:
       - name: Upload Package
         uses: actions/upload-artifact@v2
         with:
-          name: vscode-circuitpython-dev-${github.sha}.vsix
+          name: vscode-circuitpython-dev-${{ matrix.PLATFORM }}-${{github.sha}}.vsix
           path: ./vscode-circuitpython.vsix
       # TODO: Publish to VSCE Marketplace
+
