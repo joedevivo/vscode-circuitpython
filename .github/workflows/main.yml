@@ -24,6 +24,8 @@ jobs:
           path: ./boards
 
   build:
+    needs:
+      - stubs
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
