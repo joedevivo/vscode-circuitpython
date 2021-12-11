@@ -20,7 +20,7 @@ jobs:
       - name: Persist Boards
         uses: actions/upload-artifact@v2
         with:
-          name: stubs
+          name: boards
           path: ./boards
 
   build:
