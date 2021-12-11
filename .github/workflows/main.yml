@@ -4,27 +4,38 @@ on:
     branches:
         - gha
 jobs:
-  linuxBindings:
+  stubs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Install Node.js
-        uses:  actions/setup-node@v1
-        with:
-          node-version: 14.16
-      - name: npm install
+      - name: Build Stubs
         run: |
-          npm install
-          npm run electron-rebuild
-          npm run build-bindings
-      - name: persist bindings
-        uses: actions/upload-artifact@v1
+          ./scripts/build-stubs.sh
+      - name: Persist Stubs
+        uses: actions/upload-artifact@v2
         with:
-          name: bindings-linux
-          path: bindings
-  macosX86Bindings:
-    runs-on:  macos-latest
+          name: stubs
+          path: ./stubs
+      - name: Persist Boards
+        uses: actions/upload-artifact@v2
+        with:
+          name: stubs
+          path: ./boards
+
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [
+          ubuntu-latest,
+          macos-latest,
+          windows-latest
+        ]
+        include:
+          - os: ubuntu-latest
+          - os: macos-latest
+          - os: windows-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -36,52 +47,19 @@ jobs:
         run: |
           npm install
           npm run electron-rebuild
-          npm run build-bindings
-      - name: persist bindings
-        uses: actions/upload-artifact@v1
+      - name: Download Stubs
+        uses: actions/download-artifact@v2
         with:
-          name: bindings-macos-x86
-          path: bindings
-  macosArmBindings:
-    runs-on:  self-hosted
-    env:
-      ARCH: arm64
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      # use local node built for arm  
-      #- name: Install Node.js
-      #  uses:  actions/setup-node@v1
-      #  with:
-      #    node-version: 14.16
-      - name: npm install
-        run: |
-          which python3
-          arch -arm64 which python3
-          arch -arm64 npm install
-          arch -arm64 npm run electron-rebuild
-          arch -arm64 npm run build-bindings
-      - name: persist bindings
-        uses: actions/upload-artifact@v1
+          name: stubs
+      - name: Download Boards
+        uses: actions/download-artifact@v2
         with:
-          name: bindings-macos-arm
-          path: bindings
-  win10Bindings:
-    runs-on:  windows-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Install Node.js
-        uses:  actions/setup-node@v1
+          name: boards
+      - name: Package Extension
+        run: ./node_modules/.bin/vsce package -o vscode-circuitpython.vsix
+      - name: Upload Package
+        uses: actions/upload-artifact@v2
         with:
-          node-version: 14.16
-      - name: npm install
-        run: |
-          npm install
-          npm run electron-rebuild
-          npm run build-bindings
-      - name: persist bindings
-        uses: actions/upload-artifact@v1
-        with:
-          name: bindings-windows-x86
-          path: bindings
+          name: vscode-circuitpython-dev-${github.sha}.vsix
+          path: ./vscode-circuitpython.vsix
+      # TODO: Publish to VSCE Marketplace
