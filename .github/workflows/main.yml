@@ -32,7 +32,7 @@ jobs:
           ubuntu-latest,
           macos-latest,
           windows-latest,
-          M1
+          self-hosted
         ]
         include:
           - os: ubuntu-latest
@@ -44,7 +44,7 @@ jobs:
           - os: windows-latest
             TARGET: win32-x64
             NODE_ARCH: x64
-          - os: M1
+          - os: self-hosted
             TARGET: darwin-arm64
             NODE_ARCH: arm64
     steps:
