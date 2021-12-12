@@ -33,10 +33,6 @@ jobs:
             platform: win32
             arch: x64
             npm_config_arch: x64
-          - os: windows-latest
-            platform: win32
-            arch: ia32
-            npm_config_arch: ia32
           #- os: windows-latest
           #  platform: win32
           #  arch: arm64
@@ -49,14 +45,10 @@ jobs:
             platform: linux
             arch: arm64
             npm_config_arch: arm64
-          - os: ubuntu-latest
-            platform: linux
-            arch: armhf
-            npm_config_arch: arm
-          - os: ubuntu-latest
-            platform: alpine
-            arch: x64
-            npm_config_arch: x64
+          #- os: ubuntu-latest
+          #  platform: linux
+          #  arch: armhf
+          #  npm_config_arch: arm7l
           - os: macos-latest
             platform: darwin
             arch: x64
@@ -71,11 +63,12 @@ jobs:
       - name: Install Node.js
         uses:  actions/setup-node@v2
         with:
-          node-version: 14.16
+          node-version: '14'
+        #  architecture: ${{ matrix.npm_config_arch }}
       - name: npm install
         run: |
           npm install
-          npm run electron-rebuild
+          npm run electron-rebuild -- --arch=${{ matrix.npm_config_arch }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           npm_config_arch: ${{ matrix.npm_config_arch }}
@@ -83,14 +76,19 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: stubs
+          path: stubs
       - name: Download Boards
         uses: actions/download-artifact@v2
         with:
           name: boards
+          path: boards
       - shell: pwsh
         run: echo "target=${{ matrix.platform }}-${{ matrix.arch }}" >> $env:GITHUB_ENV
       - name: Package Extension
         run: ./node_modules/.bin/vsce package --target ${{ env.target }} -o vscode-circuitpython.vsix
+      - name: Check Platform
+        if: ${{ matrix.os != 'windows-latest' }}
+        run: ls -al node_modules/@serialport/bindings/bin
       - name: Upload Package
         uses: actions/upload-artifact@v2
         with:
