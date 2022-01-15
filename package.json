@@ -170,7 +170,7 @@
     "npm": "^7.20.5",
     "semver": "^7.3.5",
     "serialport": "^9.2.0",
-    "shelljs": "^0.8.4",
+    "shelljs": "^0.8.5",
     "trash": "^6.1.1",
     "typed-rest-client": "^1.8.0",
     "typescript-http-client": "^0.10.1",
