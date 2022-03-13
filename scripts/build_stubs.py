@@ -3,7 +3,6 @@
 # These need to be bundled with the extension, which means that adding new boards is still
 # a new release of the extension.
 
-# import mypy
 import json
 import pathlib
 import re

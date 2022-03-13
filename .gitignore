@@ -17,3 +17,6 @@ new.diff
 .history
 build
 *.tar.gz
+.yarn
+yarn-error.log
+package

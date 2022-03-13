@@ -1,23 +1,25 @@
 import * as vscode from "vscode";
 import * as os from "os";
-import SerialPort = require("@serialport/stream");
+import { SerialPort } from 'serialport';
 import { Board } from "../boards/board";
 import { Container } from "../container";
+import { PortInfo } from '@serialport/bindings-interface';
+
 
 class SerialPickItem implements vscode.QuickPickItem {
   public label: string;
   public description: string;
-  public serialPort: SerialPort.PortInfo;
-  public constructor(sp: SerialPort.PortInfo) {
+  public serialPort: PortInfo;
+  public constructor(sp: PortInfo) {
     this.label = sp.path;
     if (sp.vendorId && sp.productId) {
       let b: Board = Board.lookup(sp.vendorId, sp.productId);
       if (b) {
         this.description = `${b.manufacturer}:${b.product}`;
-      } 
+      }
     }
     if(!this.description) {
-      let bits: string[] = 
+      let bits: string[] =
         [
           sp.manufacturer,
           sp.vendorId,
@@ -46,7 +48,7 @@ export class SerialMonitor implements vscode.Disposable {
 
   public constructor() {
     try {
-      SerialPort.Binding = require('@serialport/bindings');
+//      SerialPort.Binding = require('@serialport/bindings');
       this._writeEmitter = new vscode.EventEmitter<string>();
       let pty:vscode.Pseudoterminal = {
         onDidWrite: this._writeEmitter.event,
@@ -82,7 +84,7 @@ export class SerialMonitor implements vscode.Disposable {
       vscode.window.showInformationMessage("No serial port is available.");
       return;
     }
-    const chosen = await vscode.window.showQuickPick(<SerialPickItem[]>lists.map((l: SerialPort.PortInfo): SerialPickItem => {
+    const chosen = await vscode.window.showQuickPick(<SerialPickItem[]>lists.map((l: PortInfo): SerialPickItem => {
       return new SerialPickItem(l);
     }).sort((a, b): number => {
         return a.label === b.label ? 0 : (a.label > b.label ? 1 : -1);
@@ -105,13 +107,13 @@ export class SerialMonitor implements vscode.Disposable {
     if (this._serialPort) {
       if (this._currentPort.serialPort.path !== this._serialPort.path) {
         await this._serialPort.close();
-        this._serialPort = new SerialPort(this._currentPort.serialPort.path, {baudRate: SerialMonitor.BAUD_RATE, autoOpen: false});
+        this._serialPort = new SerialPort({path: this._currentPort.serialPort.path, baudRate: SerialMonitor.BAUD_RATE, autoOpen: false});
       } else if (this._serialPort.isOpen) {
         vscode.window.showWarningMessage(`Serial monitor is already opened for ${this._currentPort.serialPort.path}`);
         return;
       }
     } else {
-      this._serialPort = new SerialPort(this._currentPort.serialPort.path, {baudRate: SerialMonitor.BAUD_RATE, autoOpen: false});
+      this._serialPort = new SerialPort({ path: this._currentPort.serialPort.path, baudRate: SerialMonitor.BAUD_RATE, autoOpen: false});
     }
 
     this._terminal.show();
@@ -125,7 +127,7 @@ export class SerialMonitor implements vscode.Disposable {
     }
     this._writeEmitter.fire(`[Open] Connection to ${this._currentPort.serialPort.path}${os.EOL}\r\n`);
     this._writeEmitter.fire(`press Ctrl-C to enter the REPL${os.EOL}\r\n`);
-    
+
     this._serialPort.on("data", (_event) => {
       this._writeEmitter.fire(_event.toString());
     });

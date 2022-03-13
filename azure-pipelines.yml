@@ -34,10 +34,12 @@ stages:
     - job: macOSBindings_arm64
       pool:
         name: Default
-        demands: 
+        demands:
           - agent.os -equals Darwin
           - ARCH -equals arm64
       steps:
+      - script: 'which node'
+      - script: 'node --version'
       # node built for m1 already on the box
       - task: Npm@1
         inputs:
@@ -100,7 +102,7 @@ stages:
       steps:
       - task: UsePythonVersion@0
         inputs:
-          versionSpec: '3.6'
+          versionSpec: '3.9'
       - script: ./scripts/build-stubs.sh
       - publish: $(System.DefaultWorkingDirectory)/stubs
         artifact: stubs
@@ -110,7 +112,7 @@ stages:
   - stage: Package
     dependsOn: Bindings
     jobs:
-    - job: package 
+    - job: package
       pool:
         #name: Default
         #demands:
@@ -150,7 +152,7 @@ stages:
       - publish: $(System.DefaultWorkingDirectory)/node_modules
         artifact: modules-with-bindings
       - script: mkdir $(System.DefaultWorkingDirectory)/package
-      - script: ./node_modules/.bin/vsce package -o package/vscode-circuitpython-dev-`echo $(Build.SourceVersion) | cut -c -8`.vsix
+      - script: ./node_modules/.bin/vsce package --no-yarn -o package/vscode-circuitpython-dev-`echo $(Build.SourceVersion) | cut -c -8`.vsix
       - publish: $(System.DefaultWorkingDirectory)/package
         artifact: package
       - bash: |

@@ -17,7 +17,7 @@
 
     # `make stubs` in circuitpython
     pip3 install wheel  # required on debian buster for some reason
-    pip3 install -r docs/requirements.txt
+    pip3 install -r requirements-doc.txt
     make stubs
     if [ -d ../stubs ]; then
         mv circuitpython-stubs/* ../stubs/
@@ -29,7 +29,6 @@
     cd ..
 
     # scripts/build_stubs.py in this repo for board stubs
-    pip3 install -r requirements.txt
     python3 ./scripts/build_stubs.py
     rm -rf stubs/board
 
