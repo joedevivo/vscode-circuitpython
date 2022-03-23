@@ -8,6 +8,7 @@ in this file.
 - Board Update
 - CircuitPython Update
 - Upgrade `serialport` dependency
+- Move to GitHub Actions for CI
 
 ## [0.1.15]
 - Electron Rebuild 13.1.7
