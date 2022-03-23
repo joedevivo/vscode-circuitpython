@@ -33,5 +33,5 @@
     rm -rf stubs/board
 
     # get out of venv
-    deactivate
+    . circuitpython/.venv/bin/deactivate
 )
