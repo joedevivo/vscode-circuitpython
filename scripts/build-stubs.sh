@@ -32,6 +32,7 @@
     python3 ./scripts/build_stubs.py
     rm -rf stubs/board
 
-    # get out of venv
-    . circuitpython/.venv/bin/deactivate
+    # was crashing on `deactivate`, but guess what?! We're in parenthesis, so
+    # it's a subshell. venv will go away when that subshell exits, which is,
+    # wait for it.... now!
 )
