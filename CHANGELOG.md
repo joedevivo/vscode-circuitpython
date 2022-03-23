@@ -3,6 +3,13 @@
 All notable changes to the "vscode-circuitpython" extension will be documented
 in this file.
 
+## [0.1.16]
+- Fix [#72](https://github.com/joedevivo/vscode-circuitpython/issues/72)
+- Board Update
+- CircuitPython Update
+- Upgrade `serialport` dependency
+- Move to GitHub Actions for CI
+
 ## [0.1.15]
 - Electron Rebuild 13.1.7
 - Board Update

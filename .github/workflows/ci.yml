@@ -1,0 +1,70 @@
+name: CI
+on:
+  push:
+    branches:
+      - "**"
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            platform: win32
+            arch: x64
+            npm_config_arch: x64
+          - os: ubuntu-latest
+            platform: linux
+            arch: x64
+            npm_config_arch: x64
+          - os: ubuntu-latest
+            platform: linux
+            arch: armhf
+            npm_config_arch: arm
+          - os: macos-latest
+            platform: darwin
+            arch: x64
+            npm_config_arch: x64
+          - os: macos-latest
+            platform: darwin
+            arch: arm64
+            npm_config_arch: arm64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+          cache: 'npm'
+      - run: npm i -g npm@latest
+      - run: npm --version
+      - run: npm install
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          npm_config_arch: ${{ matrix.npm_config_arch }}
+      - name: Electron Rebuild
+        run: npm run electron-rebuild
+      - name: Build stubs and board metadata
+        run: ./scripts/build-stubs.sh
+        shell: bash
+      - name: Stay on target
+        shell: pwsh
+        run: echo "target=${{ matrix.platform }}-${{ matrix.arch }}" >> $env:GITHUB_ENV
+      - name: Build Package
+        run: npx vsce package --target ${{ env.target }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.target }}
+          path: "*.vsix"
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: build
+    if: success() && startsWith( github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/download-artifact@v2
+      - run: npx vsce publish --packagePath $(find . -iname *.vsix)
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}

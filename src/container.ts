@@ -62,7 +62,7 @@ export class Container implements vscode.Disposable {
     this.registerCommand('selectBoard', () => this._boardManager.selectBoard());
 
     try {
-      require("@serialport/bindings");
+      require("@serialport/bindings-cpp");
       this.registerCommand('openSerialMonitor', () => this._serialMonitor.openSerialMonitor());
       this.registerCommand('selectSerialPort', () => this._serialMonitor.selectSerialPort(null, null));
       this.registerCommand('closeSerialMonitor', () => this._serialMonitor.closeSerialMonitor());

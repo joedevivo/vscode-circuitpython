@@ -377,6 +377,8 @@ export class LibraryManager implements vscode.Disposable {
             Container.loadBundleMetadata();
           };
         });
+      }).catch((error) => {
+        console.log(`Error downloading {suffix} bundle: ${url}`);
       });
     };
   }

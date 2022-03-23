@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
-import * as serialport from 'serialport';
+import { SerialPort } from 'serialport';
+import { PortInfo } from '@serialport/bindings-interface';
 //import SerialPort = require("serialport");
 import * as drivelist from 'drivelist';
 
@@ -47,8 +48,8 @@ export class DeviceManager implements vscode.Disposable {
 
         - "WD WDC WD30EFRX-68EUZN0 Media"
     */
-    let serialPorts: serialport.PortInfo[] =
-        await serialport.list();
+    let serialPorts: PortInfo[] =
+        await SerialPort.list();
     /*
     PortInfo
 

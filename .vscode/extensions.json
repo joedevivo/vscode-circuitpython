@@ -5,6 +5,7 @@
 		"dbaeumer.vscode-eslint",
 		"ms-vscode.vscode-typescript-tslint-plugin",
 		"editorconfig.editorconfig",
-		"esbenp.prettier-vscode"
+		"esbenp.prettier-vscode",
+		"dbaeumer.vscode-eslint", "amodio.tsl-problem-matcher"
 	]
 }
