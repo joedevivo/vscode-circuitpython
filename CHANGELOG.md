@@ -3,6 +3,9 @@
 All notable changes to the "vscode-circuitpython" extension will be documented
 in this file.
 
+## [0.1.17]
+- Update dependabot alert on `plist`
+
 ## [0.1.16]
 - Fix [#72](https://github.com/joedevivo/vscode-circuitpython/issues/72)
 - Board Update
