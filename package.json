@@ -2,7 +2,7 @@
   "name": "vscode-circuitpython",
   "displayName": "CircuitPython",
   "description": "CircuitPython for Visual Studio Code",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "publisher": "joedevivo",
   "license": "MIT",
   "qna": "https://github.com/joedevivo/vscode-circuitpython/discussions",
@@ -135,8 +135,7 @@
     "install-bindings": "node ./scripts/install-bindings.js"
   },
   "extensionDependencies": [
-    "ms-python.python",
-    "ms-python.vscode-pylance"
+    "ms-python.python"
   ],
   "devDependencies": {
     "@mapbox/node-pre-gyp": "^1.0.5",
