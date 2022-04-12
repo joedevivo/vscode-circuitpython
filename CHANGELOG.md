@@ -3,6 +3,10 @@
 All notable changes to the "vscode-circuitpython" extension will be documented
 in this file.
 
+## [0.1.18]
+- Drop `pylance` dependency
+- Publish on `open-vsx.org`
+
 ## [0.1.17]
 - Update Electron to 17.2.0
 - VSCode >= 1.66.0
