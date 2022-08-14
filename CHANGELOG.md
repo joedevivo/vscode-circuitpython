@@ -3,6 +3,11 @@
 All notable changes to the "vscode-circuitpython" extension will be documented
 in this file.
 
+## [0.1.19]
+- Update to Electron 18
+- Added `Open Board's CircuitPython.org` page for easy access to firmware downloads
+- Every release includes the latest boards.
+
 ## [0.1.18]
 - Drop `pylance` dependency
 - Publish on `open-vsx.org`

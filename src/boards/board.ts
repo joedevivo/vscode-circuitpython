@@ -10,6 +10,7 @@ export class Board implements QuickPickItem {
   public manufacturer: string;
   public label: string;
   public description: string = "";
+  public site: string;
 
   public constructor(m: Map<string, string>) {
     this.vid = m["vid"];
@@ -17,6 +18,9 @@ export class Board implements QuickPickItem {
     this.product = m["product"];
     this.manufacturer = m["manufacturer"];
     this.label = this.manufacturer + ":" + this.product;
+    if(m["site_path"]){
+      this.site = `https://circuitpython.org/board/${m["site_path"]}/`
+    };
   }
 
   private static _boards: Map<string, Board> = null;

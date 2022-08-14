@@ -60,7 +60,7 @@ export class Container implements vscode.Disposable {
     vscode.workspace.onDidDeleteFiles((e: vscode.FileDeleteEvent) => this._libraryManager.reloadProjectLibraries());
     this.registerCommand('library.fetch', () => this._libraryManager.updateBundle());
     this.registerCommand('selectBoard', () => this._boardManager.selectBoard());
-
+    this.registerCommand('openBoardSite', () => this._boardManager.openBoardSite());
     try {
       require("@serialport/bindings-cpp");
       this.registerCommand('openSerialMonitor', () => this._serialMonitor.openSerialMonitor());
@@ -90,6 +90,10 @@ export class Container implements vscode.Disposable {
   public static setBoard(board: Board) {
     Container._instance._project.setBoard(board);
     Container._instance._boardManager.updateBoardChoiceStatus(board);
+  }
+
+  public static getBoard(): Board {
+    return Container._instance._project.getBoard();
   }
 
   public static reloadProjectLibraries() {

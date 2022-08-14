@@ -47,6 +47,10 @@ export class BoardManager implements vscode.Disposable {
     }
   }
 
+  public async openBoardSite() {
+    vscode.env.openExternal(vscode.Uri.parse(Container.getBoard().site));
+  }
+
   public updateBoardChoiceStatus(board: Board) {
     if (board) {
       this._boardChoice.text = board.label;
