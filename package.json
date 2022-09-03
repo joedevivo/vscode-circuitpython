@@ -173,6 +173,7 @@
     "vsce": "^2.7.0"
   },
   "dependencies": {
+    "@serialport/bindings-interface": "^1.2.2",
     "axios": "^0.26.1",
     "drivelist": "^9.2.4",
     "fs-extra": "^8.1.0",
