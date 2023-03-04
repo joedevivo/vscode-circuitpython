@@ -3,6 +3,8 @@
 All notable changes to the "vscode-circuitpython" extension will be documented
 in this file.
 
+## [0.1.20]
+- Circuit Python 8
 ## [0.1.19]
 - Update to Electron 18
 - Added `Open Board's CircuitPython.org` page for easy access to firmware downloads
