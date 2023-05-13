@@ -5,10 +5,11 @@ export async function activate(context: vscode.ExtensionContext) {
 	vscode.workspace.getConfiguration().update("python.languageServer", "Pylance");
 	vscode.workspace.getConfiguration().update("python.linting.pylintEnabled", false);
 
-	vscode.workspace.getConfiguration().update("python.analysis.diagnosticSeverityOverrides",
-	{
-		"reportMissingModuleSource": "none"
-    }
+	let config_key = "python.analysis.diagnosticSeverityOverrides"
+	let	current_value = vscode.workspace.getConfiguration()[config_key];
+	current_value["reportMissingModuleSource"] = "none"
+	vscode.workspace.getConfiguration().update(config_key,
+		current_value
 	);
 	let container: Container = await Container.newInstance(context);
 }
