@@ -6,9 +6,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	vscode.workspace.getConfiguration().update("python.linting.pylintEnabled", false);
 
 	let config_key = "python.analysis.diagnosticSeverityOverrides"
-	let current_value = vscode.workspace.getConfiguration()[config_key];
-	current_value["reportMissingModuleSource"] = "none";
-	vscode.workspace.getConfiguration().update(config_key,current_value);
+	let config_value = vscode.workspace.getConfiguration()[config_key];
+	config_value["reportMissingModuleSource"] = "none";
+	vscode.workspace.getConfiguration().update(config_key,config_value);
 	let container: Container = await Container.newInstance(context);
 }
 
