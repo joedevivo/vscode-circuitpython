@@ -23,17 +23,27 @@ class LibraryQP implements vscode.QuickPickItem {
   public constructor(b: Library, p: Library) {
     this.bundleLib = b;
     this.projectLib = p;
-    this.label = b.name;
-
-    if(p === null) {
-      this.op = "install";
-      this.description = `Install version ${b.version}`;
-    } else if(b.version !== p.version) {
-      this.op = "update";
-      this.description = `Update from v${p.version} to v${b.version}`;
+    if(b === undefined) {
+      this.op = "custom";
+      if(p === null) {
+        this.label = "Custom";
+        this.description = "Cannot update";
+      } else {
+        this.label = p.name;
+        this.description = `v${p.version} is a custom library. Not updateable`;
+      }
     } else {
-      this.op = null;
-      this.description = `v${p.version} is installed and up to date.`;
+      this.label = b.name;
+      if(p === null) {
+        this.op = "install";
+        this.description = `Install version ${b.version}`;
+      } else if(b.version !== p.version) {
+        this.op = "update";
+        this.description = `Update from v${p.version} to v${b.version}`;
+      } else {
+        this.op = null;
+        this.description = `v${p.version} is installed and up to date.`;
+      }
     }
   }
 
