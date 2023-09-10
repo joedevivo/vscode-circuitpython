@@ -9,6 +9,7 @@ export async function activate(context: vscode.ExtensionContext) {
     "analysis.diagnosticSeverityOverrides"
   );
   pythonAnalysis["reportMissingModuleSource"] = "none";
+  pythonAnalysis["reportShadowedImports"] = "none";
   pythonConfig.update("analysis.diagnosticSeverityOverrides", pythonAnalysis);
 
   let container: Container = await Container.newInstance(context);
