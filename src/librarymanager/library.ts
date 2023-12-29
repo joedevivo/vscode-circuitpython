@@ -1,11 +1,11 @@
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 // Not used yet, but may do semver checks in the future. Right now logic assumes
 // that the most recently downloaded bundle will be newer than the one you've
 // got installed if they're different.
-import * as semver from 'semver';
-import * as path from 'path';
-import * as fs from 'fs';
-import * as _ from 'lodash';
+import * as semver from "semver";
+import * as path from "path";
+import * as fs from "fs";
+import * as _ from "lodash";
 
 /*
 A Library can either represent an entry in the Adafruit_CircuitPython_Bundle or
@@ -27,7 +27,13 @@ export class Library implements vscode.QuickPickItem {
   public location: string = null;
 
   // Location may be a file or directory
-  public constructor(name: string, version: string, repo: string, location: string, isDirectory: boolean) {
+  public constructor(
+    name: string,
+    version: string,
+    repo: string,
+    location: string,
+    isDirectory: boolean
+  ) {
     this.label = name;
     this.description = `Version: ${version}`;
     this.name = name;
@@ -43,9 +49,9 @@ export class Library implements vscode.QuickPickItem {
    */
   public static async from(p: string): Promise<Library> {
     let ext: string = path.extname(p);
-    if(ext === ".py") {
+    if (ext === ".py") {
       return Library.fromFile(p);
-    } else if(ext === ".mpy") {
+    } else if (ext === ".mpy") {
       return Library.fromBinaryFile(p);
     } else {
       return Library.fromDirectory(p);
@@ -56,7 +62,7 @@ export class Library implements vscode.QuickPickItem {
   This handles the single source py file
    */
   public static async fromFile(file: string): Promise<Library> {
-    let s: fs.ReadStream = fs.createReadStream(file, {encoding: "utf8"});
+    let s: fs.ReadStream = fs.createReadStream(file, { encoding: "utf8" });
 
     return new Promise<Library>((resolve, reject) => {
       let name: string = path.basename(file, ".py");
@@ -64,19 +70,18 @@ export class Library implements vscode.QuickPickItem {
       let repo: string = null;
 
       s.on("data", (data: string) => {
-        let lines: string[] = data.split('\n');
-        lines = _.dropWhile(lines, (l) => l.startsWith('#'));
+        let lines: string[] = data.split("\n");
+        lines = _.dropWhile(lines, (l) => l.startsWith("#"));
         while ((version === null || repo === null) && lines.length > 0) {
           let l: string = _.head(lines);
-          if(l.startsWith('__version__')) {
-            version = l.replace(/__version__\s=\s"([\d.?]+)"/, '$1').trim();
-          } else if(l.startsWith('__repo__')) {
-            repo = l.replace(/__repo__\s=\s"(.+)"/, '$1');
+          if (l.startsWith("__version__")) {
+            version = l.replace(/__version__\s=\s"([\d.?]+)"/, "$1").trim();
+          } else if (l.startsWith("__repo__")) {
+            repo = l.replace(/__repo__\s=\s"(.+)"/, "$1");
           }
           lines = _.tail(lines);
         }
-      })
-      .once('end', () => {
+      }).once("end", () => {
         resolve(new Library(name, version, repo, file, false));
       });
     });
@@ -99,13 +104,12 @@ export class Library implements vscode.QuickPickItem {
       s.on("data", (data: string) => {
         let chunk: string = data.toString();
         let start: number = chunk.search(/[\d*\.?]+[\x0b|\x16]+__version__/);
-        let end: number = chunk.indexOf('__version');
+        let end: number = chunk.indexOf("__version");
         version = chunk.substring(start, end).trim();
         while (version.endsWith("\x16") || version.endsWith("\x0b")) {
           version = version.substring(0, version.length - 1);
         }
-      })
-      .once('end', () => {
+      }).once("end", () => {
         let l: Library = new Library(name, version, null, file, false);
         l.mpy = true;
         resolve(l);
@@ -125,12 +129,12 @@ export class Library implements vscode.QuickPickItem {
     let files: string[] = fs.readdirSync(dir);
     let deepFiles: string[] = [];
     files.forEach((file: string) => {
-        deepFiles = []
-        if (fs.lstatSync(path.join(dir, file)).isDirectory()) {
-            deepFiles = deepFiles.concat(fs.readdirSync(path.join(dir, file)));
-            deepFiles = deepFiles.map((v, i, a) => path.join(file, v));
-        }
-        files = files.concat(deepFiles);
+      deepFiles = [];
+      if (fs.lstatSync(path.join(dir, file)).isDirectory()) {
+        deepFiles = deepFiles.concat(fs.readdirSync(path.join(dir, file)));
+        deepFiles = deepFiles.map((v, i, a) => path.join(file, v));
+      }
+      files = files.concat(deepFiles);
     });
     let mpyfiles: string[] = _.filter(files, (f) => path.extname(f) === ".mpy");
     let pyfiles: string[] = _.filter(files, (f) => path.extname(f) === ".py");
@@ -140,7 +144,9 @@ export class Library implements vscode.QuickPickItem {
     if (mpyfiles.length > 0) {
       files = mpyfiles;
       mpy = true;
-      modules = files.map((v, i, a) => Library.fromBinaryFile(path.join(dir, v)));
+      modules = files.map((v, i, a) =>
+        Library.fromBinaryFile(path.join(dir, v))
+      );
     } else {
       files = pyfiles;
       modules = files.map((v, i, a) => Library.fromFile(path.join(dir, v)));
@@ -153,11 +159,11 @@ export class Library implements vscode.QuickPickItem {
       let repo: string = null;
 
       potentials = potentials.filter((v, i, a) => {
-        return(v.version !== null && v.version !== "");
+        return v.version !== null && v.version !== "";
       });
 
       let l: Library = _.find(potentials, (v) => v.repo !== null);
-      if(l === undefined) {
+      if (l === undefined) {
         l = potentials.shift();
       }
       version = l.version;
