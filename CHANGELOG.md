@@ -6,6 +6,8 @@ in this file.
 ## Next
 - Merged [#123](https://github.com/joedevivo/vscode-circuitpython/pull/123)
 - Merged [#62](https://github.com/joedevivo/vscode-circuitpython/pull/62)
+- Merged [#122](https://github.com/joedevivo/vscode-circuitpython/pull/122)
+- Merged [#29](https://github.com/joedevivo/vscode-circuitpython/pull/29)
 - Upgraded dependencies
 
 ## [0.1.20]
