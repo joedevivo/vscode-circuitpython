@@ -9,6 +9,7 @@ in this file.
 - Merged [#122](https://github.com/joedevivo/vscode-circuitpython/pull/122)
 - Merged [#29](https://github.com/joedevivo/vscode-circuitpython/pull/29)
 - Upgraded dependencies
+- Fixed version info for .py files
 
 ## [0.1.20]
 - Circuit Python 8

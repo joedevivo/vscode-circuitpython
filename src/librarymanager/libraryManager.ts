@@ -10,6 +10,7 @@ import * as globby from "globby";
 import * as fs_extra from "fs-extra";
 import * as trash from "trash";
 import { Container } from "../container";
+import { V4MAPPED } from "dns";
 
 class LibraryQP implements vscode.QuickPickItem {
   // QuickPickItem impl
@@ -388,10 +389,19 @@ export class LibraryManager implements vscode.Disposable {
   Downloads 6.x. and source bundles. Source are crucial for autocomplete
   */
   private async getBundle(tag: string) {
+    let metdataUrl: string =
+      LibraryManager.BUNDLE_URL +
+      "/releases/download/{0}/adafruit-circuitpython-bundle-{0}.json";
     let urlRoot: string =
       LibraryManager.BUNDLE_URL +
       "/releases/download/{0}/adafruit-circuitpython-bundle-{1}-{0}.zip";
     this.tag = tag;
+
+    let metadataUrl: string = String.Format(metdataUrl, tag);
+    fs.mkdirSync(path.join(this.storageRootDir, "bundle", tag), {
+      recursive: true,
+    });
+
     for await (const suffix of LibraryManager.BUNDLE_SUFFIXES) {
       let url: string = String.Format(urlRoot, tag, suffix);
       let p: string = path.join(this.storageRootDir, "bundle", tag);
@@ -399,18 +409,40 @@ export class LibraryManager implements vscode.Disposable {
       await axios.default
         .get(url, { responseType: "stream" })
         .then((response) => {
-          response.data
-            .pipe(unzip.Extract({ path: p }))
-            .on("close", (entry) => {
-              if (suffix === "py") {
-                Container.loadBundleMetadata();
-              }
-            });
+          response.data.pipe(unzip.Extract({ path: p }));
         })
         .catch((error) => {
           console.log(`Error downloading {suffix} bundle: ${url}`);
         });
     }
+
+    let dest: string = path.join(
+      this.storageRootDir,
+      "bundle",
+      tag,
+      `adafruit-circuitpython-bundle-${tag}.json`
+    );
+
+    await axios.default
+      .get(metadataUrl, { responseType: "json" })
+      .then((response) => {
+        fs.writeFileSync(dest, JSON.stringify(response.data), {
+          encoding: "utf8",
+        });
+        /*
+        , (err) => {
+          if (err) {
+            console.log(`Error writing file: ${err}`);
+          } else {
+          }
+        });
+        */
+      })
+      .catch((error) => {
+        console.log(`Error downloading bundle metadata: ${metadataUrl}`);
+      });
+
+    Container.loadBundleMetadata();
   }
 
   public static getMpy(name: string): string {
@@ -430,6 +462,12 @@ export class LibraryManager implements vscode.Disposable {
 
   public async loadBundleMetadata(): Promise<boolean> {
     let bundlePath = this.bundlePath("py");
+    /*
+    let bundlePath = path.join(
+      this.localBundleDir,
+      `adafruit-circuitpython-bundle-${this.tag}.json`
+    );
+    */
     this.libraries = await this.loadLibraryMetadata(bundlePath);
     return true;
   }
@@ -437,7 +475,13 @@ export class LibraryManager implements vscode.Disposable {
   private async loadLibraryMetadata(
     rootDir: string
   ): Promise<Map<string, Library>> {
-    console.log(rootDir);
+    let jsonMetadataFile = path.join(
+      this.localBundleDir,
+      `adafruit-circuitpython-bundle-${this.tag}.json`
+    );
+    let rawData = fs.readFileSync(jsonMetadataFile, "utf8");
+    let jsonData = JSON.parse(rawData);
+
     let libDirs: string[] = await globby("*", {
       absolute: true,
       cwd: rootDir,
@@ -446,7 +490,12 @@ export class LibraryManager implements vscode.Disposable {
     });
 
     let libraries: Array<Promise<Library>> = libDirs.map((p, i, a) =>
-      Library.from(p)
+      Library.from(p).then((l) => {
+        if (rootDir.startsWith(this.localBundleDir)) {
+          l.version = jsonData[l.name].version;
+        }
+        return l;
+      })
     );
 
     return new Promise<Map<string, Library>>(async (resolve, reject) => {
