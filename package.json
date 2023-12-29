@@ -162,13 +162,13 @@
     "glob": "^7.2.3",
     "minimist": "^1.2.8",
     "mocha": "^10.2.0",
-    "node-abi": "^2.30.1",
-    "node-gyp": "^9.4.1",
+    "node-abi": "^3.52.0",
+    "node-gyp": "^10.0.1",
     "tar": "^6.2.0",
     "ts-loader": "^9.5.1",
-    "typed-rest-client": "^1.8.0",
-    "typescript": "^4.5.5",
-    "typescript-http-client": "^0.10.1"
+    "typed-rest-client": "^1.8.11",
+    "typescript": "^4.9.5",
+    "typescript-http-client": "^0.10.4"
   },
   "dependencies": {
     "@serialport/bindings-cpp": "^12.0.1",
