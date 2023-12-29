@@ -8,3 +8,8 @@ all:
 	@npm run electron-rebuild
 	@./scripts/build-stubs.sh
 	@npx @vscode/vsce package
+
+.PHONY: quick
+quick:
+	@npm install
+	@npx @vscode/vsce package
