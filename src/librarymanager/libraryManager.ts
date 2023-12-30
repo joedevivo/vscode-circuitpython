@@ -75,7 +75,7 @@ export class LibraryManager implements vscode.Disposable {
   public static BUNDLE_URL: string = "https://github.com/adafruit/Adafruit_CircuitPython_Bundle";
 
   public static BUNDLE_SUFFIXES: string[] = [
-    'py', '6.x-mpy', '7.x-mpy'
+    'py', '7.x-mpy', '8.x-mpy'
   ];
   public static BUNDLE_VERSION_REGEX: RegExp = /\d\d\d\d\d\d\d\d/;
   // storageRootDir is passed in from the extension BoardManager as

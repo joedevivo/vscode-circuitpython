@@ -1,16 +1,18 @@
-import * as vscode from 'vscode';
-import { Container } from './container';
+import * as vscode from "vscode";
+import { Container } from "./container";
 
 export async function activate(context: vscode.ExtensionContext) {
-	vscode.workspace.getConfiguration().update("python.languageServer", "Pylance");
-	vscode.workspace.getConfiguration().update("python.linting.pylintEnabled", false);
+  let pythonConfig: vscode.WorkspaceConfiguration =
+    vscode.workspace.getConfiguration("python");
+  pythonConfig.update("languageServer", "Pylance");
+  let pythonAnalysis: Object = pythonConfig.get(
+    "analysis.diagnosticSeverityOverrides"
+  );
+  pythonAnalysis["reportMissingModuleSource"] = "none";
+  pythonAnalysis["reportShadowedImports"] = "none";
+  pythonConfig.update("analysis.diagnosticSeverityOverrides", pythonAnalysis);
 
-	vscode.workspace.getConfiguration().update("python.analysis.diagnosticSeverityOverrides",
-	{
-		"reportMissingModuleSource": "none"
-    }
-	);
-	let container: Container = await Container.newInstance(context);
+  let container: Container = await Container.newInstance(context);
 }
 
 // this method is called when your extension is deactivated
