@@ -174,7 +174,7 @@
   },
   "dependencies": {
     "@serialport/bindings-interface": "^1.2.2",
-    "axios": "^0.26.1",
+    "axios": "^1.6.0",
     "drivelist": "^9.2.4",
     "fs-extra": "^8.1.0",
     "globby": "^11.0.4",
