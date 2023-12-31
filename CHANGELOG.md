@@ -3,7 +3,7 @@
 All notable changes to the "vscode-circuitpython" extension will be documented
 in this file.
 
-## Next
+## [0.2.0]
 - Merged [#123](https://github.com/joedevivo/vscode-circuitpython/pull/123)
 - Merged [#62](https://github.com/joedevivo/vscode-circuitpython/pull/62)
 - Merged [#122](https://github.com/joedevivo/vscode-circuitpython/pull/122)
