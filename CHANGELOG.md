@@ -3,8 +3,17 @@
 All notable changes to the "vscode-circuitpython" extension will be documented
 in this file.
 
+## [0.2.0]
+- Merged [#123](https://github.com/joedevivo/vscode-circuitpython/pull/123)
+- Merged [#62](https://github.com/joedevivo/vscode-circuitpython/pull/62)
+- Merged [#122](https://github.com/joedevivo/vscode-circuitpython/pull/122)
+- Merged [#29](https://github.com/joedevivo/vscode-circuitpython/pull/29)
+- Upgraded dependencies
+- Fixed version info for .py files
+
 ## [0.1.20]
 - Circuit Python 8
+
 ## [0.1.19]
 - Update to Electron 18
 - Added `Open Board's CircuitPython.org` page for easy access to firmware downloads
