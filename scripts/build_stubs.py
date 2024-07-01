@@ -54,7 +54,7 @@ def normalize_vid_pid(vid_or_pid: str):
 
 
 _PIN_DEF_RE = re.compile(
-    r"\s*{\s*MP_ROM_QSTR\(MP_QSTR_(?P<name>[^\)]*)\)\s*,\s*MP_ROM_PTR\((?P<value>[^\)]*)\).*"
+    r"\s*{\s*(?:MP_ROM_QSTR|MP_OBJ_NEW_QSTR)\(MP_QSTR_(?P<name>[^\)]*)\)\s*,\s*MP_ROM_PTR\((?P<value>[^\)]*)\).*"
 )
 
 
